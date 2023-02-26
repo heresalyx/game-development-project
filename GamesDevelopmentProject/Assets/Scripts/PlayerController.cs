@@ -83,6 +83,7 @@ public class PlayerController : MonoBehaviour
         if (value.started)
         {
             int level = Random.Range(1, 6);
+            level = 5;
             cameraCanvas.SetActive(false);
             logicCanvas.SetActive(true);
             logicGenerator.CreateLogic(level);

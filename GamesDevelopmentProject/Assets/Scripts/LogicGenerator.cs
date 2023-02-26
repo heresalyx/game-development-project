@@ -28,14 +28,17 @@ public class LogicGenerator : MonoBehaviour
     public void CreateRecursiveLogic(LogicNode parentNode, int level, int height)
     {
         //If level = 1 then
-            //Create startPoint at position height and return
+        //Create startPoint at position height and return
+        Toggle toggle;
+
         if (level == 1)
         {
             GameObject startPoint = Instantiate(startPointPrefab, parentNode.gameObject.transform);
             LogicStartpoint startPointScript = startPoint.GetComponent<LogicStartpoint>();
             startPointScript.parentNode = parentNode;
-            startPointScript.currentToggle = startPoint.GetComponent<Toggle>();
-            parentNode.AddInput(startPoint.GetComponent<Toggle>());
+            toggle = startPoint.GetComponent<Toggle>();
+            startPointScript.currentToggle = toggle;
+            parentNode.AddInput(toggle);
 
             //Set Position to the left if height = -1 (first node)
             if (height == -1)
@@ -54,15 +57,16 @@ public class LogicGenerator : MonoBehaviour
         else
             currentPrefab = LogicGatePrefabs[Random.Range(0, 7)];
         GameObject gateNode = Instantiate(currentPrefab, parentNode.gameObject.transform);
+      
 
         Debug.Log(currentPrefab.name);
         LogicNode gateNodeScript = gateNode.GetComponent(currentPrefab.name) as LogicNode;
         Debug.Log(gateNodeScript);
         
-        
         gateNodeScript.parentNode = parentNode;
-        gateNodeScript.currentToggle = gateNode.GetComponent<Toggle>();
-        parentNode.AddInput(gateNode.GetComponent<Toggle>());
+        toggle = gateNode.GetComponent<Toggle>();
+        gateNodeScript.currentToggle = toggle;
+        parentNode.AddInput(toggle);
 
         //Set Position to the left if height = -1 (first node)
         if (height == -1)
