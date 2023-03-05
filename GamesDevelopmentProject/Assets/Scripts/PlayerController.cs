@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public SecurityCamera currentCamera;
     public GameObject cursor;
     public float moveSpeed;
+    public float startRotation;
+    public float currentRotation;
     public float lookSpeed;
     private Vector2 currentMove;
     private Vector2 currentControllerLook;
@@ -20,6 +22,8 @@ public class PlayerController : MonoBehaviour
     public void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        startRotation = currentCamera.GetStartRotation();
+        currentRotation = startRotation;
     }
 
     public void Update()
@@ -44,7 +48,19 @@ public class PlayerController : MonoBehaviour
             newLook = new Vector3(newLook.x, 0);
         cursor.transform.localPosition += newLook;
 
-        currentCamera.gameObject.transform.localRotation = Quaternion.Euler(-cursor.transform.localPosition.y / Screen.height * 27, cursor.transform.localPosition.x / Screen.width * 48, 0f);
+        //Use the x axis on currentMove to control camera y rotation.
+        float xMove = currentMove[0] * Time.deltaTime * moveSpeed;
+        if (xMove > 0.01 || xMove < -0.01)
+        {
+            //Debug.Log(currentCamera.GetCamera().transform.localRotation.y * 180);
+            //if (currentCamera.GetCamera().transform.localRotation.y - xMove < 45 + startRotation && currentCamera.GetCamera().transform.localRotation.y - xMove > -45 + startRotation)
+            //    currentRotation += xMove;
+
+            if (currentRotation + xMove < 30 + startRotation && currentRotation + xMove > -30 + startRotation)
+                currentRotation += xMove;
+        }
+
+        currentCamera.gameObject.transform.localRotation = Quaternion.Euler(-cursor.transform.localPosition.y / Screen.height * 9, (cursor.transform.localPosition.x / Screen.width * 16) + currentRotation, 0f);
 
         Debug.Log(Mouse.current.delta.ReadValue());
         Debug.Log(currentMouseLook);
@@ -72,6 +88,8 @@ public class PlayerController : MonoBehaviour
         {
             SecurityCamera previousCamera = currentCamera;
             currentCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
+            startRotation = currentCamera.GetStartRotation();
+            currentRotation = startRotation;
 
             previousCamera.ToggleActivation(false);
             currentCamera.ToggleActivation(true);
@@ -83,7 +101,7 @@ public class PlayerController : MonoBehaviour
         if (value.started)
         {
             int level = Random.Range(1, 6);
-            level = 5;
+            level = 4;
             cameraCanvas.SetActive(false);
             logicCanvas.SetActive(true);
             logicGenerator.CreateLogic(level);

@@ -445,7 +445,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 5
+          m_IntArgument: 4
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1031,8 +1031,8 @@ MonoBehaviour:
     type: 3}
   LogicGatePrefabs:
   - {fileID: 924210821629077181, guid: ae83c0a8f6b14a7449fb0071b1e70e0b, type: 3}
-  - {fileID: 924210821629077181, guid: a9fb63183d857d54e9ad4362842cd43e, type: 3}
   - {fileID: 924210821629077181, guid: a2f37c5a48ec63b48ae75fe23cacc06d, type: 3}
+  - {fileID: 924210821629077181, guid: a9fb63183d857d54e9ad4362842cd43e, type: 3}
   - {fileID: 924210821629077181, guid: be2a4297b1502de4caf2e9f6b61f9d62, type: 3}
   - {fileID: 924210821629077181, guid: 979e18067e7b54746920e23311ff76fa, type: 3}
   - {fileID: 924210821629077181, guid: 4a9b783dea007a8468b20b4522687960, type: 3}
@@ -1205,6 +1205,8 @@ MonoBehaviour:
   currentCamera: {fileID: 703816766}
   cursor: {fileID: 894893054}
   moveSpeed: 25
+  startRotation: 0
+  currentRotation: 0
   lookSpeed: 1000
 --- !u!1 &565811928
 GameObject:
@@ -2220,6 +2222,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 697815389}
     m_Modifications:
+    - target: {fileID: 423117160479968244, guid: aaed5eefc00377a4f960ad38582667e7,
+        type: 3}
+      propertyPath: startRotation
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 423117160479968244, guid: aaed5eefc00377a4f960ad38582667e7,
         type: 3}
       propertyPath: playerController

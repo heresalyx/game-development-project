@@ -9,11 +9,13 @@ public class LogicGenerator : MonoBehaviour
     public GameObject startPointPrefab;
     public GameObject endPointPrefab;
     public List<GameObject> LogicGatePrefabs;
-    private List<int> steps = new List<int> {1, 2, 6, 24};
-    private List<float> yStart = new List<float> { 0.5f, 2, 9, 48 };
+    private List<int> steps = new List<int> {1, 2, 4, 8, 16};
+    private List<float> yStart = new List<float> { 0.5f, 1, 2, 4, 8 };
 
     public void CreateLogic(int level)
     {
+        if (canvas.transform.childCount != 0)
+            Destroy(canvas.transform.GetChild(0).gameObject);
         canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1904, 12000);
         GameObject endPoint = Instantiate(endPointPrefab, canvas.transform);
         LogicEndpoint endPointScript = endPoint.GetComponent<LogicEndpoint>();
@@ -53,9 +55,9 @@ public class LogicGenerator : MonoBehaviour
         //Create gate node at position height, then set parent as parentNode.
         GameObject currentPrefab;
         if (height == -1)
-            currentPrefab = LogicGatePrefabs[Random.Range(0, 3)];
+            currentPrefab = LogicGatePrefabs[Random.Range(0, 2)];
         else
-            currentPrefab = LogicGatePrefabs[Random.Range(0, 7)];
+            currentPrefab = LogicGatePrefabs[Random.Range(0, 2)];
         GameObject gateNode = Instantiate(currentPrefab, parentNode.gameObject.transform);
       
 
@@ -79,7 +81,8 @@ public class LogicGenerator : MonoBehaviour
 
         //For every i in level
         //Call CreateRecursiveLogic Method with new gate node, level - 1, and height = i.
-        for (int i = 0; i < level; i++)
+
+        for (int i = 0; i < 2; i++)
             CreateRecursiveLogic(gateNodeScript, level - 1, i);
     }
 }

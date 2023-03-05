@@ -9,6 +9,7 @@ public class SecurityCamera : MonoBehaviour
     public AudioListener gameObjectAudioListener;
     public GameObject gameObjectCanvas;
     public RectTransform identifier;
+    public float startRotation;
 
     private void Update()
     {
@@ -39,5 +40,10 @@ public class SecurityCamera : MonoBehaviour
     public GameObject GetCanvas()
     {
         return gameObjectCanvas;
+    }
+
+    public float GetStartRotation()
+    {
+        return startRotation;
     }
 }
