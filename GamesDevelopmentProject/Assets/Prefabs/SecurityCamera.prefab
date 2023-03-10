@@ -803,7 +803,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -839,6 +839,7 @@ MonoBehaviour:
   mainCamera: {fileID: 0}
   cinemachineCamera: {fileID: 4505365335879895754}
   gameObjectCamera: {fileID: 3026735825669026550}
+  gameObjectCollider: {fileID: 6415259130050279437}
   gameObjectCanvas: {fileID: 6415259130083270920}
   identifier: {fileID: 6415259128542112989}
   startXRotation: 0
@@ -890,7 +891,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6415259130083270916}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 0}

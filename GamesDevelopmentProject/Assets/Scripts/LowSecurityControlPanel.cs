@@ -6,8 +6,11 @@ public class LowSecurityControlPanel : HackableObject
 {
     public override void UnlockOutput()
     {
-        outputGameObject.SetActive(true);
-        objectCollider.enabled = false;
-        gameObjectCanvas.enabled = false;
+        foreach (GameObject output in outputGameObject)
+        {
+            output.GetComponent<SecurityCamera>().MakeInteractable();
+            objectCollider.enabled = false;
+            gameObjectCanvas.enabled = false;
+        }
     }
 }

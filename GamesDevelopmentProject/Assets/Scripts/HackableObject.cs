@@ -4,7 +4,7 @@ using UnityEngine;
 
 abstract public class HackableObject : MonoBehaviour
 {
-    public GameObject outputGameObject;
+    public GameObject[] outputGameObject;
     public int level;
     public Camera mainCamera;
     public Canvas gameObjectCanvas;

@@ -6,8 +6,11 @@ public class DoorLock : HackableObject
 {
     public override void UnlockOutput()
     {
-        outputGameObject.transform.position = new Vector3(outputGameObject.transform.position.x, outputGameObject.transform.position.y + 2, outputGameObject.transform.position.z);
-        objectCollider.enabled = false;
-        gameObjectCanvas.enabled = false;
+        foreach (GameObject output in outputGameObject)
+        {
+            output.transform.position = new Vector3(output.transform.position.x, output.transform.position.y + 2, output.transform.position.z);
+            objectCollider.enabled = false;
+            gameObjectCanvas.enabled = false;
+        }
     }
 }

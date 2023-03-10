@@ -8,6 +8,7 @@ public class SecurityCamera : MonoBehaviour
     public Camera mainCamera;
     public CinemachineVirtualCamera cinemachineCamera;
     public GameObject gameObjectCamera;
+    public SphereCollider gameObjectCollider;
     public Canvas gameObjectCanvas;
     public RectTransform identifier;
     public float startXRotation;
@@ -38,6 +39,12 @@ public class SecurityCamera : MonoBehaviour
         cinemachineCamera.enabled = value;
         gameObjectCamera.SetActive(!value);
         gameObjectCanvas.enabled = !value;
+    }
+
+    public void MakeInteractable()
+    {
+        gameObjectCollider.enabled = true;
+        gameObjectCanvas.enabled = true;
     }
 
     public CinemachineVirtualCamera GetCinemachineCamera()
