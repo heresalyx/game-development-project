@@ -40,16 +40,16 @@ MonoBehaviour:
     dimension: 1
   Stripes:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 40
   Noisy:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 5
   VerticalShift:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 40
   HorizontalShift:
     m_OverrideState: 1
-    m_Value: 1.8
+    m_Value: 20
 --- !u!114 &9057094689645297716
 MonoBehaviour:
   m_ObjectHideFlags: 3

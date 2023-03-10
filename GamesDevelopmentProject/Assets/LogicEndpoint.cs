@@ -5,7 +5,14 @@ using UnityEngine.UI;
 
 public class LogicEndpoint : LogicNode
 {
+    public LogicGenerator logicGenerator;
+
     public LogicEndpoint(LogicNode parentNode) : base(parentNode) { }
+
+    public void SetLogicGenerator(LogicGenerator logic)
+    {
+        logicGenerator = logic;
+    }
 
     public override void Interact() { }
 
@@ -20,5 +27,13 @@ public class LogicEndpoint : LogicNode
         }
 
         currentToggle.isOn = isTrue;
+    }
+
+    public void CheckToggle()
+    {
+        if (currentToggle.isOn)
+        {
+            logicGenerator.LogicComplete();
+        }
     }
 }

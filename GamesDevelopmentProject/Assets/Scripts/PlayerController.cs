@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,21 +11,37 @@ public class PlayerController : MonoBehaviour
     public GameObject cameraCanvas;
     public GameObject logicCanvas;
 
+    //Turn into Generic Type
+    public HackableObject hackedObject;
+
+    public Camera mainCamera;
     public SecurityCamera currentCamera;
     public GameObject cursor;
+    public TextMeshProUGUI currentTime;
+    public TextMeshProUGUI currentName;
+    public Slider currentZoom;
     public float moveSpeed;
-    public float startRotation;
+    public float startXRotation;
+    public float startYRotation;
     public float currentRotation;
     public float lookSpeed;
     private Vector2 currentMove;
     private Vector2 currentControllerLook;
     private Vector2 currentMouseLook;
 
+    public void Awake()
+    {
+        DontDestroyOnLoad(mainCamera);
+        DontDestroyOnLoad(gameObject);
+    }
+
     public void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        startRotation = currentCamera.GetStartRotation();
-        currentRotation = startRotation;
+        startXRotation = currentCamera.GetStartXRotation();
+        startYRotation = currentCamera.GetStartYRotation();
+        currentRotation = startYRotation;
+        StartCoroutine(UpdateTime());
     }
 
     public void Update()
@@ -32,9 +50,12 @@ public class PlayerController : MonoBehaviour
         float yMove = currentMove[1] * Time.deltaTime * moveSpeed;
         if (yMove > 0.01 || yMove < -0.01)
         {
-            Debug.Log(currentCamera.GetCamera().fieldOfView - yMove);
-            if (currentCamera.GetCamera().fieldOfView - yMove < 60 && currentCamera.GetCamera().fieldOfView - yMove > 15)
-                currentCamera.GetCamera().fieldOfView -= yMove;
+            //Debug.Log(currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove);
+            if (currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove < 60 && currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove > 15)
+            {
+                currentCamera.GetCinemachineCamera().m_Lens.FieldOfView -= yMove;
+                currentZoom.value -= yMove;
+            }
         }
 
         //Use the x and y axis on currentLook to control cursor.
@@ -56,14 +77,14 @@ public class PlayerController : MonoBehaviour
             //if (currentCamera.GetCamera().transform.localRotation.y - xMove < 45 + startRotation && currentCamera.GetCamera().transform.localRotation.y - xMove > -45 + startRotation)
             //    currentRotation += xMove;
 
-            if (currentRotation + xMove < 30 + startRotation && currentRotation + xMove > -30 + startRotation)
+            if (currentRotation + xMove < 30 + startYRotation && currentRotation + xMove > -30 + startYRotation)
                 currentRotation += xMove;
         }
 
-        currentCamera.gameObject.transform.localRotation = Quaternion.Euler(-cursor.transform.localPosition.y / Screen.height * 9, (cursor.transform.localPosition.x / Screen.width * 16) + currentRotation, 0f);
+        currentCamera.gameObject.transform.localRotation = Quaternion.Euler((-cursor.transform.localPosition.y / Screen.height * 9) + startXRotation, (cursor.transform.localPosition.x / Screen.width * 16) + currentRotation, 0f);
 
-        Debug.Log(Mouse.current.delta.ReadValue());
-        Debug.Log(currentMouseLook);
+        //Debug.Log(Mouse.current.delta.ReadValue());
+        //Debug.Log(currentMouseLook);
     }
 
     //This method uses the wasd keys and right stick on the gamepad.
@@ -82,18 +103,57 @@ public class PlayerController : MonoBehaviour
 
     public void Interact(InputAction.CallbackContext value)
     {
-        Ray cameraRay = currentCamera.GetCamera().ScreenPointToRay(cursor.transform.position);
-
-        if (Physics.Raycast(cameraRay, out RaycastHit hit) && hit.collider.tag == "SecurityCamera")
+        if (value.started && hackedObject == null)
         {
-            SecurityCamera previousCamera = currentCamera;
-            currentCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
-            startRotation = currentCamera.GetStartRotation();
-            currentRotation = startRotation;
+            Ray cameraRay = mainCamera.ScreenPointToRay(cursor.transform.position);
+            bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit);
 
-            previousCamera.ToggleActivation(false);
-            currentCamera.ToggleActivation(true);
+            if (objectHit && hit.collider.tag == "SecurityCamera")
+            {
+                SecurityCamera previousCamera = currentCamera;
+                currentCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
+                startXRotation = currentCamera.GetStartXRotation();
+                startYRotation = currentCamera.GetStartYRotation();
+                currentRotation = startYRotation;
+
+                previousCamera.ToggleActivation(false);
+                currentCamera.ToggleActivation(true);
+
+                currentName.text = hit.collider.name;
+                currentZoom.value = currentCamera.GetCinemachineCamera().m_Lens.FieldOfView;
+            }
+
+            if (objectHit && hit.collider.tag == "DoorLock")
+            {
+                Debug.Log("Lock Hit");
+                hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
+                LogicInit(hackedObject.GetLevel());
+            }
+
+            if (objectHit && hit.collider.tag == "LowSecurityControlPanel")
+            {
+                Debug.Log("LCP Hit");
+                hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
+                LogicInit(hackedObject.GetLevel());
+            }
         }
+    }
+
+    public void LogicInit(int level)
+    {
+        cameraCanvas.SetActive(false);
+        logicCanvas.SetActive(true);
+        logicGenerator.CreateLogic(level);
+        Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    public void LogicComplete()
+    {
+        cameraCanvas.SetActive(true);
+        logicCanvas.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+        hackedObject.UnlockOutput();
+        hackedObject = null;
     }
 
     public void TestLogicInit(InputAction.CallbackContext value)
@@ -112,5 +172,14 @@ public class PlayerController : MonoBehaviour
     public SecurityCamera GetCurrentSecurityCamera()
     {
         return currentCamera;
+    }
+
+    IEnumerator UpdateTime()
+    {
+        while (true)
+        {
+            currentTime.text = "" + System.DateTime.Now.ToString("G");
+            yield return new WaitForSeconds(1.0f);
+        }
     }
 }

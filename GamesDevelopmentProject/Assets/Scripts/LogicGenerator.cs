@@ -5,22 +5,25 @@ using UnityEngine.UI;
 
 public class LogicGenerator : MonoBehaviour
 {
+    public PlayerController playerController;
     public GameObject canvas;
     public GameObject startPointPrefab;
     public GameObject endPointPrefab;
     public List<GameObject> LogicGatePrefabs;
     private List<int> steps = new List<int> {1, 2, 4, 8, 16};
     private List<float> yStart = new List<float> { 0.5f, 1, 2, 4, 8 };
+    public GameObject endPoint;
 
     public void CreateLogic(int level)
     {
         if (canvas.transform.childCount != 0)
             Destroy(canvas.transform.GetChild(0).gameObject);
         canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1904, 12000);
-        GameObject endPoint = Instantiate(endPointPrefab, canvas.transform);
+        endPoint = Instantiate(endPointPrefab, canvas.transform);
         LogicEndpoint endPointScript = endPoint.GetComponent<LogicEndpoint>();
         endPointScript.parentNode = null;
         endPointScript.currentToggle = endPoint.GetComponent<Toggle>();
+        endPointScript.SetLogicGenerator(this);
         endPointScript.transform.localPosition = new Vector3((level * 250) / 2, 0, 0);
 
         //Call CreateRecursiveLogic Method with endPoint, level, and height = -1
@@ -39,7 +42,7 @@ public class LogicGenerator : MonoBehaviour
             LogicStartpoint startPointScript = startPoint.GetComponent<LogicStartpoint>();
             startPointScript.parentNode = parentNode;
             toggle = startPoint.GetComponent<Toggle>();
-            startPointScript.currentToggle = toggle;
+            startPointScript.SetRandomToggle(toggle);
             parentNode.AddInput(toggle);
 
             //Set Position to the left if height = -1 (first node)
@@ -85,4 +88,11 @@ public class LogicGenerator : MonoBehaviour
         for (int i = 0; i < 2; i++)
             CreateRecursiveLogic(gateNodeScript, level - 1, i);
     }
+
+    public void LogicComplete()
+    {
+        Debug.Log("Logic Complete");
+        Destroy(endPoint);
+        playerController.LogicComplete();
+    }    
 }

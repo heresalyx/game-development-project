@@ -18,4 +18,13 @@ public class LogicStartpoint : LogicNode
     }
 
     public override void Check() {}
+
+    public void SetRandomToggle(Toggle toggle)
+    {
+        currentToggle = toggle;
+        if (Random.Range(0, 2) == 0)
+            currentToggle.isOn = true;
+        else
+            currentToggle.isOn = false;
+    }
 }

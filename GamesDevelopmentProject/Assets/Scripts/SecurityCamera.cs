@@ -1,22 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class SecurityCamera : MonoBehaviour
 {
-    public PlayerController playerController;
-    public Camera gameObjectCamera;
-    public AudioListener gameObjectAudioListener;
-    public GameObject gameObjectCanvas;
+    public Camera mainCamera;
+    public CinemachineVirtualCamera cinemachineCamera;
+    public GameObject gameObjectCamera;
+    public Canvas gameObjectCanvas;
     public RectTransform identifier;
-    public float startRotation;
+    public float startXRotation;
+    public float startYRotation;
+
+    private void Start()
+    {
+        mainCamera = Camera.main;
+        gameObjectCanvas.worldCamera = mainCamera;
+        gameObjectCanvas.planeDistance = 0.28f;
+    }
 
     private void Update()
     {
-        SecurityCamera currentSecurityCamera = playerController.GetCurrentSecurityCamera();
-        if (currentSecurityCamera != this)
+        if (!cinemachineCamera.enabled)
         {
-            Vector3 newPosition = currentSecurityCamera.GetCamera().WorldToScreenPoint(gameObject.transform.position);
+            Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);
 
             if (newPosition.z < 0)
                 identifier.anchoredPosition = new Vector3(-300, -300, 0);
@@ -27,23 +35,28 @@ public class SecurityCamera : MonoBehaviour
 
     public void ToggleActivation(bool value)
     {
-        gameObjectCamera.enabled = value;
-        gameObjectAudioListener.enabled = value;
-        gameObjectCanvas.SetActive(!value);
+        cinemachineCamera.enabled = value;
+        gameObjectCamera.SetActive(!value);
+        gameObjectCanvas.enabled = !value;
     }
 
-    public Camera GetCamera()
+    public CinemachineVirtualCamera GetCinemachineCamera()
     {
-        return gameObjectCamera;
+        return cinemachineCamera;
     }
 
-    public GameObject GetCanvas()
+    public Canvas GetCanvas()
     {
         return gameObjectCanvas;
     }
 
-    public float GetStartRotation()
+    public float GetStartYRotation()
     {
-        return startRotation;
+        return startYRotation;
+    }
+
+    public float GetStartXRotation()
+    {
+        return startXRotation;
     }
 }
