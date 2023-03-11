@@ -8,6 +8,8 @@ TagManager:
   - DoorLock
   - LowSecurityControlPanel
   - Robot
+  - HighSecurityControlPanel
+  - ChargingStation
   layers:
   - Default
   - TransparentFX

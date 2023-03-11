@@ -52,67 +52,69 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
-        if (inCamera)
+        if (hackedObject == null)
         {
-            //Use the y axis on currentMove to control camera zoom (FOV).
-            float yMove = currentMove[1] * Time.deltaTime * moveSpeed;
-            if (yMove > 0.01 || yMove < -0.01)
+            if (inCamera)
             {
-                //Debug.Log(currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove);
-                if (currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove < 60 && currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove > 15)
+                //Use the y axis on currentMove to control camera zoom (FOV).
+                float yMove = currentMove[1] * Time.deltaTime * moveSpeed;
+                if (yMove > 0.01 || yMove < -0.01)
                 {
-                    currentCamera.GetCinemachineCamera().m_Lens.FieldOfView -= yMove;
-                    currentZoom.value -= yMove;
+                    //Debug.Log(currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove);
+                    if (currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove < 60 && currentCamera.GetCinemachineCamera().m_Lens.FieldOfView - yMove > 15)
+                    {
+                        currentCamera.GetCinemachineCamera().m_Lens.FieldOfView -= yMove;
+                        currentZoom.value -= yMove;
+                    }
                 }
+
+                //Use the x and y axis on currentLook to control cursor.
+                float xLook = ((float)currentControllerLook[0] * Time.deltaTime * lookSpeed) + Mouse.current.delta.ReadValue().x;
+                float yLook = ((float)currentControllerLook[1] * Time.deltaTime * lookSpeed) + Mouse.current.delta.ReadValue().y;
+
+                Vector3 newLook = new Vector3(xLook, yLook);
+                if (cursor.transform.localPosition.x + newLook.x > Screen.width / 2 || cursor.transform.localPosition.x + newLook.x < -Screen.width / 2)
+                    newLook = new Vector3(0, newLook.y);
+                if (cursor.transform.localPosition.y + newLook.y > Screen.height / 2 || cursor.transform.localPosition.y + newLook.y < -Screen.height / 2)
+                    newLook = new Vector3(newLook.x, 0);
+                cursor.transform.localPosition += newLook;
+
+                //Use the x axis on currentMove to control camera y rotation.
+                float xMove = currentMove[0] * Time.deltaTime * moveSpeed;
+                if (xMove > 0.01 || xMove < -0.01)
+                {
+                    //Debug.Log(currentCamera.GetCamera().transform.localRotation.y * 180);
+                    //if (currentCamera.GetCamera().transform.localRotation.y - xMove < 45 + startRotation && currentCamera.GetCamera().transform.localRotation.y - xMove > -45 + startRotation)
+                    //    currentRotation += xMove;
+
+                    if (currentRotation + xMove < 30 + startYRotation && currentRotation + xMove > -30 + startYRotation)
+                        currentRotation += xMove;
+                }
+
+                currentCamera.gameObject.transform.localRotation = Quaternion.Euler((-cursor.transform.localPosition.y / Screen.height * 9) + startXRotation, (cursor.transform.localPosition.x / Screen.width * 16) + currentRotation, 0f);
+
+                //Debug.Log(Mouse.current.delta.ReadValue());
+                //Debug.Log(currentMouseLook);
+
             }
-
-            //Use the x and y axis on currentLook to control cursor.
-            float xLook = ((float)currentControllerLook[0] * Time.deltaTime * lookSpeed) + Mouse.current.delta.ReadValue().x;
-            float yLook = ((float)currentControllerLook[1] * Time.deltaTime * lookSpeed) + Mouse.current.delta.ReadValue().y;
-
-            Vector3 newLook = new Vector3(xLook, yLook);
-            if (cursor.transform.localPosition.x + newLook.x > Screen.width / 2 || cursor.transform.localPosition.x + newLook.x < -Screen.width / 2)
-                newLook = new Vector3(0, newLook.y);
-            if (cursor.transform.localPosition.y + newLook.y > Screen.height / 2 || cursor.transform.localPosition.y + newLook.y < -Screen.height / 2)
-                newLook = new Vector3(newLook.x, 0);
-            cursor.transform.localPosition += newLook;
-
-            //Use the x axis on currentMove to control camera y rotation.
-            float xMove = currentMove[0] * Time.deltaTime * moveSpeed;
-            if (xMove > 0.01 || xMove < -0.01)
+            else
             {
-                //Debug.Log(currentCamera.GetCamera().transform.localRotation.y * 180);
-                //if (currentCamera.GetCamera().transform.localRotation.y - xMove < 45 + startRotation && currentCamera.GetCamera().transform.localRotation.y - xMove > -45 + startRotation)
-                //    currentRotation += xMove;
+                //Use the x and y axis on currentLook to control cursor.
+                float xLook = ((float)currentControllerLook[0] * Time.deltaTime) + Mouse.current.delta.ReadValue().x;
+                float yLook = ((float)currentControllerLook[1] * Time.deltaTime) + Mouse.current.delta.ReadValue().y;
 
-                if (currentRotation + xMove < 30 + startYRotation && currentRotation + xMove > -30 + startYRotation)
-                    currentRotation += xMove;
+                Vector3 newRobotLook = new Vector3(0, xLook / 10);
+                currentRobot.transform.Rotate(newRobotLook);
+
+                Vector3 newHeadLook = new Vector3(-yLook / 10, 0);
+
+                if (robotHead.localEulerAngles.x + newHeadLook.x > 50 && robotHead.localEulerAngles.x + newHeadLook.x < 310)
+                    newHeadLook = new Vector3(0, 0);
+                robotHead.transform.Rotate(newHeadLook);
+
+                Vector3 move = new Vector3(currentMove[1], 0, -currentMove[0]);
+                robotCharCon.Move(currentRobot.transform.TransformDirection(move * Time.deltaTime * 2));
             }
-
-            currentCamera.gameObject.transform.localRotation = Quaternion.Euler((-cursor.transform.localPosition.y / Screen.height * 9) + startXRotation, (cursor.transform.localPosition.x / Screen.width * 16) + currentRotation, 0f);
-
-            //Debug.Log(Mouse.current.delta.ReadValue());
-            //Debug.Log(currentMouseLook);
-
-        }
-        else
-        {
-            //Use the x and y axis on currentLook to control cursor.
-            float xLook = ((float)currentControllerLook[0] * Time.deltaTime) + Mouse.current.delta.ReadValue().x;
-            float yLook = ((float)currentControllerLook[1] * Time.deltaTime) + Mouse.current.delta.ReadValue().y;
-
-            Vector3 newRobotLook = new Vector3(0, xLook / 10);
-            currentRobot.transform.Rotate(newRobotLook);
-
-            Vector3 newHeadLook = new Vector3(-yLook / 10, 0);
-
-            Debug.Log(robotHead.localEulerAngles.x + newHeadLook.x);
-            if (robotHead.localEulerAngles.x + newHeadLook.x > 50 && robotHead.localEulerAngles.x + newHeadLook.x < 310)
-                newHeadLook = new Vector3(0, 0);
-            robotHead.transform.Rotate(newHeadLook);
-
-            Vector3 move = new Vector3(currentMove[1], 0, -currentMove[0]);
-            robotCharCon.Move(currentRobot.transform.TransformDirection(move * Time.deltaTime * 2));
         }
     }
 
@@ -132,7 +134,7 @@ public class PlayerController : MonoBehaviour
 
     public void Interact(InputAction.CallbackContext value)
     {
-        if (value.started && hackedObject == null)
+        if (value.started && hackedObject == null && inCamera)
         {
             Ray cameraRay = mainCamera.ScreenPointToRay(cursor.transform.position);
             bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit);
@@ -172,6 +174,37 @@ public class PlayerController : MonoBehaviour
                 hackedObject = hit.collider.gameObject.GetComponent<Robot>();
                 LogicInit(hackedObject.GetLevel());
             }
+
+            if (objectHit && hit.collider.tag == "HighSecurityControlPanel")
+            {
+                Debug.Log("HCP Hit");
+                HighSecurityControlPanel panel = hit.collider.gameObject.GetComponent<HighSecurityControlPanel>();
+                if (panel.GetSecurityState() == 1)
+                {
+                    hackedObject = panel;
+                    LogicInit(hackedObject.GetLevel());
+
+                }
+            }
+        }
+        else if (value.started && hackedObject == null && !inCamera)
+        {
+            Ray cameraRay = mainCamera.ScreenPointToRay(cursor.transform.position);
+            bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit, 1.0f);
+
+            Debug.Log("Robot Click");
+
+            if (objectHit && hit.collider.tag == "HighSecurityControlPanel")
+            {
+                Debug.Log("HCP Hit");
+                HighSecurityControlPanel panel = hit.collider.gameObject.GetComponent<HighSecurityControlPanel>();
+                if (panel.GetSecurityState() == 2)
+                {
+                    hackedObject = panel;
+                    LogicInit(hackedObject.GetLevel());
+
+                }
+            }
         }
     }
 
@@ -195,6 +228,7 @@ public class PlayerController : MonoBehaviour
             robotHead = currentRobot.GetRobotHead();
             inCamera = false;
             cursor.transform.localPosition = Vector3.zero;
+            currentRobot.LinkController(this);
         }
 
         hackedObject.UnlockOutput();
@@ -217,6 +251,11 @@ public class PlayerController : MonoBehaviour
     public SecurityCamera GetCurrentSecurityCamera()
     {
         return currentCamera;
+    }
+
+    public void ActivateCameraView()
+    {
+        inCamera = true;
     }
 
     IEnumerator UpdateTime()
