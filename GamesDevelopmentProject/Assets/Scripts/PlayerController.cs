@@ -98,16 +98,21 @@ public class PlayerController : MonoBehaviour
         else
         {
             //Use the x and y axis on currentLook to control cursor.
-            float xLook = ((float)currentControllerLook[0] * Time.deltaTime * lookSpeed) + Mouse.current.delta.ReadValue().x;
-            float yLook = ((float)currentControllerLook[1] * Time.deltaTime * lookSpeed) + Mouse.current.delta.ReadValue().y;
+            float xLook = ((float)currentControllerLook[0] * Time.deltaTime) + Mouse.current.delta.ReadValue().x;
+            float yLook = ((float)currentControllerLook[1] * Time.deltaTime) + Mouse.current.delta.ReadValue().y;
 
-            Vector3 newLook = new Vector3(xLook, yLook);
-            if (cursor.transform.localRotation.y + newLook.y > 70 || cursor.transform.localRotation.y + newLook.y < -70)
-                newLook = new Vector3(newLook.x, 0);
-            currentRobot.transform.Rotate(newLook);
+            Vector3 newRobotLook = new Vector3(0, xLook / 10);
+            currentRobot.transform.Rotate(newRobotLook);
 
-            Vector3 move = new Vector3(currentMove[0], 0, currentMove[1]);
-            currentRobot.Move(move * Time.deltaTime * moveSpeed);
+            Vector3 newHeadLook = new Vector3(-yLook / 10, 0);
+
+            Debug.Log(robotHead.localEulerAngles.x + newHeadLook.x);
+            if (robotHead.localEulerAngles.x + newHeadLook.x > 50 && robotHead.localEulerAngles.x + newHeadLook.x < 310)
+                newHeadLook = new Vector3(0, 0);
+            robotHead.transform.Rotate(newHeadLook);
+
+            Vector3 move = new Vector3(currentMove[1], 0, -currentMove[0]);
+            robotCharCon.Move(currentRobot.transform.TransformDirection(move * Time.deltaTime * 2));
         }
     }
 
@@ -183,7 +188,15 @@ public class PlayerController : MonoBehaviour
         cameraCanvas.SetActive(true);
         logicCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
-        if (hackedObject == )
+        if (hackedObject.GetType().Name == "Robot")
+        {
+            currentRobot = (Robot)hackedObject;
+            robotCharCon = currentRobot.GetCharacterController();
+            robotHead = currentRobot.GetRobotHead();
+            inCamera = false;
+            cursor.transform.localPosition = Vector3.zero;
+        }
+
         hackedObject.UnlockOutput();
         hackedObject = null;
     }

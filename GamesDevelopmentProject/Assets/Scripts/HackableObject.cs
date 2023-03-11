@@ -18,7 +18,7 @@ abstract public class HackableObject : MonoBehaviour
         gameObjectCanvas.planeDistance = 0.28f;
     }
 
-    private void Update()
+    public virtual void Update()
     {
         Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);
 
