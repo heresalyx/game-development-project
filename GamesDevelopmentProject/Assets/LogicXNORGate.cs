@@ -13,9 +13,9 @@ public class LogicXNORGate : LogicNode
     {
         int noOfTrue = 0;
 
-        foreach (Toggle toggle in inputs)
+        foreach (LogicNode toggle in inputs)
         {
-            if (toggle.isOn)
+            if (toggle.GetToggleActive())
                 noOfTrue++;
         }
 

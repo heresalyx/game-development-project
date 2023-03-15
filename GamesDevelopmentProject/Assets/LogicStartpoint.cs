@@ -21,10 +21,17 @@ public class LogicStartpoint : LogicNode
 
     public void SetRandomToggle(Toggle toggle)
     {
-        currentToggle = toggle;
+        if (currentToggle != toggle)
+            currentToggle = toggle;
         if (Random.Range(0, 2) == 0)
             currentToggle.isOn = true;
         else
             currentToggle.isOn = false;
+    }
+
+    public override bool Shuffle()
+    {
+        SetRandomToggle(currentToggle);
+        return true;
     }
 }

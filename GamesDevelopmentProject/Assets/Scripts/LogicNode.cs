@@ -7,7 +7,7 @@ abstract public class LogicNode : MonoBehaviour
 {
     public LogicNode parentNode;
     public Toggle currentToggle;
-    public List<Toggle> inputs;
+    public List<LogicNode> inputs;
 
     public LogicNode(LogicNode parentNode)
     {
@@ -19,8 +19,22 @@ abstract public class LogicNode : MonoBehaviour
 
     abstract public void Check();
 
-    public void AddInput(Toggle input)
+    public virtual bool Shuffle()
+    {
+        foreach (LogicNode input in inputs)
+        {
+            input.Shuffle();
+        }
+        return true;
+    }
+
+    public void AddInput(LogicNode input)
     {
         inputs.Add(input);
+    }
+
+    public bool GetToggleActive()
+    {
+        return currentToggle.isOn;
     }
 }

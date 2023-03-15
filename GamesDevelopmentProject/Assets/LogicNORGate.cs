@@ -13,9 +13,9 @@ public class LogicNORGate : LogicNode
     {
         bool isTrue = true;
 
-        foreach (Toggle toggle in inputs)
+        foreach (LogicNode toggle in inputs)
         {
-            if (toggle.isOn)
+            if (toggle.GetToggleActive())
                 isTrue = false;
         }
 

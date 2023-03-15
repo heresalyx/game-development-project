@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class LogicEndpoint : LogicNode
 {
     public LogicGenerator logicGenerator;
+    public bool isActive = false;
 
     public LogicEndpoint(LogicNode parentNode) : base(parentNode) { }
 
@@ -20,9 +21,9 @@ public class LogicEndpoint : LogicNode
     {
         bool isTrue = true;
 
-        foreach (Toggle toggle in inputs)
+        foreach (LogicNode input in inputs)
         {
-            if (!toggle.isOn)
+            if (!input.GetToggleActive())
                 isTrue = false;
         }
 
@@ -31,9 +32,18 @@ public class LogicEndpoint : LogicNode
 
     public void CheckToggle()
     {
-        if (currentToggle.isOn)
+        if (currentToggle.isOn && isActive)
         {
             logicGenerator.LogicComplete();
         }
+        if (!currentToggle.isOn && isActive)
+        {
+            StartCoroutine(logicGenerator.LogicInterupted(0));
+        }
+    }
+
+    public void SetActive(bool value)
+    {
+        isActive = value;
     }
 }

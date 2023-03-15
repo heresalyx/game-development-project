@@ -212,7 +212,7 @@ public class PlayerController : MonoBehaviour
     {
         cameraCanvas.SetActive(false);
         logicCanvas.SetActive(true);
-        logicGenerator.CreateLogic(level);
+        StartCoroutine(logicGenerator.CreateLogic(level));
         Cursor.lockState = CursorLockMode.Confined;
     }
 

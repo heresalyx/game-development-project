@@ -13,9 +13,9 @@ public class LogicNANDGate : LogicNode
     {
         bool isTrue = false;
 
-        foreach (Toggle toggle in inputs)
+        foreach (LogicNode toggle in inputs)
         {
-            if (!toggle.isOn)
+            if (!toggle.GetToggleActive())
                 isTrue = true;
         }
 
