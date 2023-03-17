@@ -7,6 +7,7 @@ using TMPro;
 public class LogicGenerator : MonoBehaviour
 {
     public PlayerController playerController;
+    public AntiVirus antiVirus;
     public GameObject canvas;
     public GameObject startPointPrefab;
     public GameObject endPointPrefab;
@@ -21,6 +22,14 @@ public class LogicGenerator : MonoBehaviour
     public float progress = 0;
     public Slider progressBar;
     public TextMeshProUGUI progressPercentage;
+
+    public void StartLogic(int level, int interupt, int difficulty)
+    {
+        StartCoroutine(CreateLogic(level));
+        if (interupt != 0)
+            StartCoroutine(Interuptor(interupt));
+        antiVirus.Activate(difficulty);
+    }
 
     public IEnumerator CreateLogic(int level)
     {
@@ -139,16 +148,24 @@ public class LogicGenerator : MonoBehaviour
         }
     }
 
+    public IEnumerator Interuptor(int value)
+    {
+        yield return new WaitForSecondsRealtime((Random.value * 30) / value);
+        StartCoroutine(LogicInterupted(1));
+        StartCoroutine(Interuptor(value));
+    }
+
     public void FixedUpdate()
     {
         if (logicComplete)
         {
             progress += 2f / Mathf.Pow(2, currentLevel);
-            progressBar.value = progress;
-            progressPercentage.text = (int)progress + "%";
+            progressBar.value = Mathf.Log10((progress + (10 * ((100 - progress)/ 100))) / 10) * 100;
+            progressPercentage.text = (int)(Mathf.Log10((progress + (10 * ((100 - progress) / 100))) / 10) * 100) + "%";
             if (progress >= 100)
             {
                 Debug.Log("Puzzle Complete");
+                StopAllCoroutines();
                 Destroy(endPoint);
                 playerController.LogicComplete();
                 logicComplete = false;

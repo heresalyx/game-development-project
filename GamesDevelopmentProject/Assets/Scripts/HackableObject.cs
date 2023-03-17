@@ -6,6 +6,8 @@ abstract public class HackableObject : MonoBehaviour
 {
     public GameObject[] outputGameObject;
     public int level;
+    public int interupt;
+    public int antiVirusDifficulty;
     public Camera mainCamera;
     public Canvas gameObjectCanvas;
     public RectTransform identifier;
@@ -31,6 +33,16 @@ abstract public class HackableObject : MonoBehaviour
     public int GetLevel()
     {
         return level;
+    }
+
+    public int GetInterupt()
+    {
+        return interupt;
+    }
+
+    public int GetAntiVirusDifficulty()
+    {
+        return antiVirusDifficulty;
     }
 
     abstract public void UnlockOutput();

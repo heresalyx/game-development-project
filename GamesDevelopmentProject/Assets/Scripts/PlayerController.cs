@@ -158,21 +158,21 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("Lock Hit");
                 hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
-                LogicInit(hackedObject.GetLevel());
+                LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
             }
 
             if (objectHit && hit.collider.tag == "LowSecurityControlPanel")
             {
                 Debug.Log("LCP Hit");
                 hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
-                LogicInit(hackedObject.GetLevel());
+                LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
             }
 
             if (objectHit && hit.collider.tag == "Robot")
             {
                 Debug.Log("Robot Hit");
                 hackedObject = hit.collider.gameObject.GetComponent<Robot>();
-                LogicInit(hackedObject.GetLevel());
+                LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
             }
 
             if (objectHit && hit.collider.tag == "HighSecurityControlPanel")
@@ -182,7 +182,7 @@ public class PlayerController : MonoBehaviour
                 if (panel.GetSecurityState() == 1)
                 {
                     hackedObject = panel;
-                    LogicInit(hackedObject.GetLevel());
+                    LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
 
                 }
             }
@@ -201,18 +201,17 @@ public class PlayerController : MonoBehaviour
                 if (panel.GetSecurityState() == 2)
                 {
                     hackedObject = panel;
-                    LogicInit(hackedObject.GetLevel());
-
+                    LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
                 }
             }
         }
     }
 
-    public void LogicInit(int level)
+    public void LogicInit(int level, int interupt, int difficulty)
     {
         cameraCanvas.SetActive(false);
         logicCanvas.SetActive(true);
-        StartCoroutine(logicGenerator.CreateLogic(level));
+        logicGenerator.StartLogic(level, interupt, difficulty);
         Cursor.lockState = CursorLockMode.Confined;
     }
 
