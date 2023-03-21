@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Cinemachine.PostFX;
+using UnityEngine.Rendering;
 
 public class Robot : HackableObject
 {
     public PlayerController playerController;
     public CharacterController characterController;
+    public CinemachineVolumeSettings cinemachineVolume;
     public Transform robotHead;
 
     public override void UnlockOutput()
@@ -48,5 +51,10 @@ public class Robot : HackableObject
                 playerController.ActivateCameraView();
             }
         }
+    }
+
+    public void SetVolumeProfile(VolumeProfile profile)
+    {
+        cinemachineVolume.m_Profile = profile;
     }
 }

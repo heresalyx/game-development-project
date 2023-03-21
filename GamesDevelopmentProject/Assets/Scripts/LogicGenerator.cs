@@ -36,7 +36,7 @@ public class LogicGenerator : MonoBehaviour
         currentLevel = level;
         if (canvas.transform.childCount != 0)
             Destroy(canvas.transform.GetChild(0).gameObject);
-        canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1904, 12000);
+        canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1904, 1064);
         endPoint = Instantiate(endPointPrefab, canvas.transform);
         endPointScript = endPoint.GetComponent<LogicEndpoint>();
         endPointScript.parentNode = null;
@@ -126,16 +126,18 @@ public class LogicGenerator : MonoBehaviour
 
     public IEnumerator LogicInterupted(int severity)
     {
-        Debug.Log("Logic Interupted");
+        //Debug.Log("Logic Interupted");
         logicComplete = false;
         if (severity == 1)
         {
+            StopCoroutine(antiVirus.CreateGlitch());
+            StartCoroutine(antiVirus.CreateGlitch());
             endPointScript.SetActive(false);
 
             do
             {
                 yield return new WaitUntil(() => endPointScript.Shuffle() == true);
-                Debug.Log("Shuffled");
+                //Debug.Log("Shuffled");
             }
             while (endPointScript.GetToggleActive());
                
@@ -165,6 +167,7 @@ public class LogicGenerator : MonoBehaviour
             if (progress >= 100)
             {
                 Debug.Log("Puzzle Complete");
+                antiVirus.StopPrompts();
                 StopAllCoroutines();
                 Destroy(endPoint);
                 playerController.LogicComplete();

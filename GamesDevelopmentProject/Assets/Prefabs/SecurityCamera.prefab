@@ -838,6 +838,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 0}
   cinemachineCamera: {fileID: 4505365335879895754}
+  cinemachineVolume: {fileID: 6924146502429829486}
   gameObjectCamera: {fileID: 3026735825669026550}
   gameObjectCollider: {fileID: 6415259130050279437}
   gameObjectCanvas: {fileID: 6415259130083270920}

@@ -5,12 +5,19 @@ using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.InputSystem.XR;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
     public LogicGenerator logicGenerator;
     public GameObject cameraCanvas;
     public GameObject logicCanvas;
+
+    public VolumeProfile cameraProfile;
+    public VolumeProfile hackingProfile;
+    public VolumeProfile robotProfile;
+    public VCRVolume currentVCR;
 
     public HackableObject hackedObject;
 
@@ -48,6 +55,7 @@ public class PlayerController : MonoBehaviour
         startYRotation = currentCamera.GetStartYRotation();
         currentRotation = startYRotation;
         StartCoroutine(UpdateTime());
+        cameraProfile.TryGet<VCRVolume>(out currentVCR);
     }
 
     public void Update()
@@ -136,11 +144,13 @@ public class PlayerController : MonoBehaviour
     {
         if (value.started && hackedObject == null && inCamera)
         {
-            Ray cameraRay = mainCamera.ScreenPointToRay(cursor.transform.position);
+            Ray cameraRay = mainCamera.ScreenPointToRay(new Vector3(cursor.transform.localPosition.x + (Screen.width / 2), cursor.transform.localPosition.y + (Screen.height / 2), 0));
             bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit);
 
             if (objectHit && hit.collider.tag == "SecurityCamera")
             {
+                StopCoroutine(CreateNoise());
+                StartCoroutine(CreateNoise());
                 SecurityCamera previousCamera = currentCamera;
                 currentCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
                 startXRotation = currentCamera.GetStartXRotation();
@@ -189,7 +199,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (value.started && hackedObject == null && !inCamera)
         {
-            Ray cameraRay = mainCamera.ScreenPointToRay(cursor.transform.position);
+            Ray cameraRay = mainCamera.ScreenPointToRay(new Vector3(cursor.transform.localPosition.x + (Screen.width / 2), cursor.transform.localPosition.y + (Screen.height / 2), 0));
             bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit, 1.0f);
 
             Debug.Log("Robot Click");
@@ -213,10 +223,18 @@ public class PlayerController : MonoBehaviour
         logicCanvas.SetActive(true);
         logicGenerator.StartLogic(level, interupt, difficulty);
         Cursor.lockState = CursorLockMode.Confined;
+        if (currentRobot != null)
+            currentRobot.SetVolumeProfile(hackingProfile);
+        else
+            currentCamera.SetVolumeProfile(hackingProfile);
     }
 
     public void LogicComplete()
     {
+        if (currentRobot != null)
+            currentRobot.SetVolumeProfile(robotProfile);
+        else
+            currentCamera.SetVolumeProfile(cameraProfile);
         cameraCanvas.SetActive(true);
         logicCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
@@ -229,7 +247,6 @@ public class PlayerController : MonoBehaviour
             cursor.transform.localPosition = Vector3.zero;
             currentRobot.LinkController(this);
         }
-
         hackedObject.UnlockOutput();
         hackedObject = null;
     }
@@ -255,6 +272,9 @@ public class PlayerController : MonoBehaviour
     public void ActivateCameraView()
     {
         inCamera = true;
+        currentRobot = null;
+        robotCharCon = null;
+        robotHead = null;
     }
 
     IEnumerator UpdateTime()
@@ -263,6 +283,21 @@ public class PlayerController : MonoBehaviour
         {
             currentTime.text = "" + System.DateTime.Now.ToString("G");
             yield return new WaitForSeconds(1.0f);
+        }
+    }
+
+    IEnumerator CreateNoise()
+    {
+        Debug.Log("Triggered Noise");
+        while (currentVCR.Noisy.value < 1.5)
+        {
+            currentVCR.Noisy.value += 0.2f;
+            yield return new WaitForSecondsRealtime(0.002f);
+        }
+        while (currentVCR.Noisy.value > 0.1)
+        {
+            currentVCR.Noisy.value -= 0.02f;
+            yield return new WaitForSecondsRealtime(0.002f);
         }
     }
 }

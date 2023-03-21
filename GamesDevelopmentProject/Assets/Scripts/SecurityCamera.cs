@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Cinemachine.PostFX;
+using UnityEngine.Rendering;
 
 public class SecurityCamera : MonoBehaviour
 {
     public Camera mainCamera;
     public CinemachineVirtualCamera cinemachineCamera;
+    public CinemachineVolumeSettings cinemachineVolume;
     public GameObject gameObjectCamera;
     public SphereCollider gameObjectCollider;
     public Canvas gameObjectCanvas;
@@ -18,7 +21,7 @@ public class SecurityCamera : MonoBehaviour
     {
         mainCamera = Camera.main;
         gameObjectCanvas.worldCamera = mainCamera;
-        gameObjectCanvas.planeDistance = 0.28f;
+        gameObjectCanvas.planeDistance = 0.12f;
     }
 
     private void Update()
@@ -65,5 +68,10 @@ public class SecurityCamera : MonoBehaviour
     public float GetStartXRotation()
     {
         return startXRotation;
+    }
+
+    public void SetVolumeProfile(VolumeProfile profile)
+    {
+        cinemachineVolume.m_Profile = profile;
     }
 }

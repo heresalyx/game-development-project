@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1339764500474771621
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9552dc531ee036d499efc8422245ab19, type: 3}
+  m_Name: GlitchVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  Active:
+    m_OverrideState: 1
+    m_Value: 0
+  When:
+    m_OverrideState: 1
+    m_Value: 500
+  Noise:
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: fe501083ed04d7148a38ba0776f57bbb, type: 3}
+    dimension: 1
+  Size:
+    m_OverrideState: 1
+    m_Value: 16
+  BlockDensity:
+    m_OverrideState: 1
+    m_Value: 1
+  LineDensity:
+    m_OverrideState: 1
+    m_Value: 1
+  Speed:
+    m_OverrideState: 1
+    m_Value: 5
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: Hacking Volume
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 5674218684874699895}
+  - {fileID: -1339764500474771621}
+--- !u!114 &5674218684874699895
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9cfa44da4f34c64bb4e878d6833959b, type: 3}
+  m_Name: VCRVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  Active:
+    m_OverrideState: 1
+    m_Value: 1
+  When:
+    m_OverrideState: 1
+    m_Value: 500
+  Noise:
+    m_OverrideState: 1
+    m_Value: {fileID: 0}
+    dimension: 1
+  Stripes:
+    m_OverrideState: 1
+    m_Value: 0
+  Noisy:
+    m_OverrideState: 1
+    m_Value: 0.05
+  VerticalShift:
+    m_OverrideState: 1
+    m_Value: 0
+  HorizontalShift:
+    m_OverrideState: 1
+    m_Value: 0
