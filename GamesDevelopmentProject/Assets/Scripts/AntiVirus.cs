@@ -26,6 +26,7 @@ public class AntiVirus : MonoBehaviour
 
     public int currentDifficulty;
     public float progress;
+    public bool isGlitching;
 
     // Start is called before the first frame update
     public void Activate(int difficulty)
@@ -59,6 +60,7 @@ public class AntiVirus : MonoBehaviour
         StartCoroutine(logicGenerator.LogicInterupted(2));
         isSequence = true;
         sequenceCanvas.gameObject.SetActive(true);
+        StartCoroutine(CreateGlitch());
         Debug.Log("Creating Sequence");
         sequenceParent = Instantiate(new GameObject(), sequenceCanvas).transform;
         for (int i = 0; i < currentDifficulty; i++)
@@ -91,12 +93,15 @@ public class AntiVirus : MonoBehaviour
         }
         else if (isSequence)
         {
-            progress -= 0.02f;
-            timer.value = Mathf.Log10((progress + ((timer.maxValue / 10) * ((timer.maxValue - progress) / timer.maxValue))) / (timer.maxValue / 10)) * timer.maxValue;
-            timerText.text = System.String.Format("{0:F2}", progress);
-            currentGlitch.Speed.value = ((timer.maxValue - progress) / timer.maxValue) * 5;
-            currentGlitch.BlockDensity.value = (timer.maxValue - progress) / timer.maxValue;
-            currentGlitch.LineDensity.value = (timer.maxValue - progress) / timer.maxValue;
+            if (!isGlitching)
+            {
+                progress -= 0.02f;
+                timer.value = Mathf.Log10((progress + ((timer.maxValue / 10) * ((timer.maxValue - progress) / timer.maxValue))) / (timer.maxValue / 10)) * timer.maxValue;
+                timerText.text = System.String.Format("{0:F2}", progress);
+                currentGlitch.Speed.value = ((timer.maxValue - progress) / timer.maxValue) * 5;
+                currentGlitch.BlockDensity.value = (timer.maxValue - progress) / timer.maxValue;
+                currentGlitch.LineDensity.value = (timer.maxValue - progress) / timer.maxValue;
+            }
         }
     }
 
@@ -107,7 +112,7 @@ public class AntiVirus : MonoBehaviour
             Debug.Log("Space Pressed!!");
         }
 
-        if (sequence.Count != 0)
+        if (sequence.Count != 0 && !isGlitching)
         {
             if (Keyboard.current[keys[sequence.Peek().GetDirection()]].wasPressedThisFrame || Keyboard.current[keys[sequence.Peek().GetDirection() + 4]].wasPressedThisFrame)
             {
@@ -153,7 +158,6 @@ public class AntiVirus : MonoBehaviour
                     Destroy(sequence.Dequeue().gameObject);
                     promptSlider = null;
                     CreateSequence();
-                    currentGlitch.Active.value = true;
                 }
             }
             else
@@ -185,12 +189,26 @@ public class AntiVirus : MonoBehaviour
 
     public IEnumerator CreateGlitch()
     {
+        isGlitching = true;
         if (!isSequence)
         {
-            Debug.Log("Triggered Glitch");
+            Debug.Log("Triggered Logic Glitch");
             currentGlitch.Active.value = true;
             yield return new WaitForSecondsRealtime(0.5f);
             currentGlitch.Active.value = false;
         }
+        else if (isSequence)
+        {
+            Debug.Log("Triggered Sequence Glitch");
+            currentGlitch.Speed.value = 15f;
+            currentGlitch.Active.value = true;
+            yield return new WaitForSecondsRealtime(0.5f);
+        }
+        isGlitching = false;
+    }
+
+    public bool GetIsSequence()
+    {
+        return isSequence;
     }
 }

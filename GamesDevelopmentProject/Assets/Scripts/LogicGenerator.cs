@@ -78,6 +78,7 @@ public class LogicGenerator : MonoBehaviour
             {
                 //Debug.Log("Level = " + level + ", y = " + (yStart[level - 1] - steps[level - 1]) + "\nyStart = " + (yStart[level - 1]) + ", step = " + (steps[level - 1])); 
                 startPoint.transform.localPosition = new Vector3(-250, (yStart[level - 1] - (steps[level - 1] * height)) * 100, 0);
+                startPointScript.SetCircuit(height);
             }
             return true;
         }
@@ -107,6 +108,7 @@ public class LogicGenerator : MonoBehaviour
         {
             //Debug.Log("Level = " + level + ", y = " + (yStart[level - 1] - steps[level - 1]) + "\nyStart = " + (yStart[level - 1]) + ", step = " + (steps[level - 1]));
             gateNode.transform.localPosition = new Vector3(-250, (yStart[level - 1] - (steps[level - 1] * height)) * 100, 0);
+            gateNodeScript.SetCircuit(height);
         }
 
         //For every i in level
@@ -153,7 +155,8 @@ public class LogicGenerator : MonoBehaviour
     public IEnumerator Interuptor(int value)
     {
         yield return new WaitForSecondsRealtime((Random.value * 30) / value);
-        StartCoroutine(LogicInterupted(1));
+        if (!antiVirus.GetIsSequence())
+            StartCoroutine(LogicInterupted(1));
         StartCoroutine(Interuptor(value));
     }
 

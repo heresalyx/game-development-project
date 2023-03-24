@@ -24,9 +24,15 @@ public class LogicStartpoint : LogicNode
         if (currentToggle != toggle)
             currentToggle = toggle;
         if (Random.Range(0, 2) == 0)
+        {
             currentToggle.isOn = true;
+            circuit.color = new Color(231,231,231);
+        }
         else
+        {
             currentToggle.isOn = false;
+            circuit.color = new Color(26,26,26);
+        }
     }
 
     public override bool Shuffle()

@@ -20,6 +20,16 @@ public class LogicANDGate : LogicNode
         }
 
         currentToggle.isOn = isTrue;
+        if (isTrue)
+        {
+            Debug.Log("Color is " + circuit.color);
+            circuit.color = new Color(231, 231, 231);
+        }
+        else
+        {
+            Debug.Log("Color is " + circuit.color);
+            circuit.color = new Color(26, 26, 26);
+        }
         //gameObject.GetComponent<Image>().enabled = isTrue;
 
         parentNode.Check();
