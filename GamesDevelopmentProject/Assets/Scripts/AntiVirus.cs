@@ -140,10 +140,9 @@ public class AntiVirus : MonoBehaviour
                         currentGlitch.Speed.value = 5;
                         currentGlitch.BlockDensity.value = 1;
                         currentGlitch.LineDensity.value = 1;
-
+                        StartCoroutine(SendPrompt());
                     }
                     sequenceCanvas.gameObject.SetActive(false);
-                    Activate(currentDifficulty);
                 }
                 else if (sequence.Count % 5 == 0)
                 {
@@ -189,7 +188,6 @@ public class AntiVirus : MonoBehaviour
 
     public IEnumerator CreateGlitch()
     {
-        isGlitching = true;
         if (!isSequence)
         {
             Debug.Log("Triggered Logic Glitch");
@@ -199,12 +197,13 @@ public class AntiVirus : MonoBehaviour
         }
         else if (isSequence)
         {
+            isGlitching = true;
             Debug.Log("Triggered Sequence Glitch");
             currentGlitch.Speed.value = 15f;
             currentGlitch.Active.value = true;
             yield return new WaitForSecondsRealtime(0.5f);
+            isGlitching = false;
         }
-        isGlitching = false;
     }
 
     public bool GetIsSequence()

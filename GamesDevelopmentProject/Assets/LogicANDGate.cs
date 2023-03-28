@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 public class LogicANDGate : LogicNode
 {
@@ -20,15 +21,13 @@ public class LogicANDGate : LogicNode
         }
 
         currentToggle.isOn = isTrue;
-        if (isTrue)
+        if (currentToggle.isOn)
         {
-            Debug.Log("Color is " + circuit.color);
-            circuit.color = new Color(231, 231, 231);
+            circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
         }
         else
         {
-            Debug.Log("Color is " + circuit.color);
-            circuit.color = new Color(26, 26, 26);
+            circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
         }
         //gameObject.GetComponent<Image>().enabled = isTrue;
 

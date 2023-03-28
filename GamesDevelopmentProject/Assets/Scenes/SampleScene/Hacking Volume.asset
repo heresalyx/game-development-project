@@ -28,13 +28,13 @@ MonoBehaviour:
     m_Value: 16
   BlockDensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.27999973
   LineDensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.27999973
   Speed:
     m_OverrideState: 1
-    m_Value: 5
+    m_Value: 1.3999987
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
     m_Value: 500
   Noise:
     m_OverrideState: 1
-    m_Value: {fileID: 0}
+    m_Value: {fileID: 2800000, guid: 46a1441fbdcd2f7458b4a9245091cca1, type: 3}
     dimension: 1
   Stripes:
     m_OverrideState: 1

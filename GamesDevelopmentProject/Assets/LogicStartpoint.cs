@@ -15,6 +15,15 @@ public class LogicStartpoint : LogicNode
     public override void Interact() 
     {
         parentNode.Check();
+
+        if (currentToggle.isOn)
+        {
+            circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
+        }
+        else
+        {
+            circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
+        }
     }
 
     public override void Check() {}
@@ -26,12 +35,12 @@ public class LogicStartpoint : LogicNode
         if (Random.Range(0, 2) == 0)
         {
             currentToggle.isOn = true;
-            circuit.color = new Color(231,231,231);
+            circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
         }
         else
         {
             currentToggle.isOn = false;
-            circuit.color = new Color(26,26,26);
+            circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
         }
     }
 

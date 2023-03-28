@@ -73,12 +73,15 @@ public class LogicGenerator : MonoBehaviour
 
             //Set Position to the left if height = -1 (first node)
             if (height == -1)
+            {
                 startPoint.transform.localPosition = new Vector3(-250, 0, 0);
+                startPointScript.SetCircuit(-1, level);
+            }
             else
             {
                 //Debug.Log("Level = " + level + ", y = " + (yStart[level - 1] - steps[level - 1]) + "\nyStart = " + (yStart[level - 1]) + ", step = " + (steps[level - 1])); 
                 startPoint.transform.localPosition = new Vector3(-250, (yStart[level - 1] - (steps[level - 1] * height)) * 100, 0);
-                startPointScript.SetCircuit(height);
+                startPointScript.SetCircuit(height, level);
             }
             return true;
         }
@@ -103,12 +106,15 @@ public class LogicGenerator : MonoBehaviour
 
         //Set Position to the left if height = -1 (first node)
         if (height == -1)
+        {
             gateNode.transform.localPosition = new Vector3(-250, 0, 0);
+            gateNodeScript.SetCircuit(-1, level);
+        }
         else
         {
             //Debug.Log("Level = " + level + ", y = " + (yStart[level - 1] - steps[level - 1]) + "\nyStart = " + (yStart[level - 1]) + ", step = " + (steps[level - 1]));
             gateNode.transform.localPosition = new Vector3(-250, (yStart[level - 1] - (steps[level - 1] * height)) * 100, 0);
-            gateNodeScript.SetCircuit(height);
+            gateNodeScript.SetCircuit(height, level);
         }
 
         //For every i in level

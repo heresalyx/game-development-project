@@ -40,11 +40,13 @@ abstract public class LogicNode : MonoBehaviour
         return currentToggle.isOn;
     }
 
-    public void SetCircuit(int height)
+    public void SetCircuit(int height, int level)
     {
-        if (height == 0)
-            circuit.Points = new Vector2[] { new Vector2(0, 0), new Vector2(125, 0), new Vector2(125, -35), new Vector2(213, -35) };
+        if (height == -1)
+            circuit.Points = new Vector2[] { new Vector2(37, 0), new Vector2(213, 0) };
+        else if (height == 0)
+            circuit.Points = new Vector2[] { new Vector2(37, 0), new Vector2(125, 0), new Vector2(125, (-50 * Mathf.Pow(2, level -1)) + 15), new Vector2(213, (-50 * Mathf.Pow(2, level - 1)) + 15) };
         else
-            circuit.Points = new Vector2[] { new Vector2(0, 0), new Vector2(125, 0), new Vector2(125, 35), new Vector2(213, 35) };
+            circuit.Points = new Vector2[] { new Vector2(37, 0), new Vector2(125, 0), new Vector2(125, (50 * Mathf.Pow(2, level - 1)) - 15), new Vector2(213, (50 * Mathf.Pow(2, level - 1)) - 15) };
     }
 }
