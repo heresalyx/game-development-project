@@ -8,70 +8,66 @@ public class LogicGenerator : MonoBehaviour
 {
     public PlayerController playerController;
     public AntiVirus antiVirus;
-    public GameObject canvas;
+    public RectTransform canvas;
+    public Slider progressBar;
+    public TextMeshProUGUI progressPercentage;
     public GameObject startPointPrefab;
     public GameObject endPointPrefab;
     public List<GameObject> LogicGatePrefabs;
     private List<int> steps = new List<int> {1, 2, 4, 8, 16};
     private List<float> yStart = new List<float> { 0.5f, 1, 2, 4, 8 };
-    public GameObject endPoint;
-    public LogicEndpoint endPointScript;
 
-    public int currentLevel;
-    public bool logicComplete = false;
-    public float progress = 0;
-    public Slider progressBar;
-    public TextMeshProUGUI progressPercentage;
+    private GameObject endPoint;
+    private LogicEndpoint endPointScript;
+    private int currentLevel;
+    private bool logicComplete = false;
+    private float progress = 0;
 
+    // Set the properties of the new logic puzzle before creating the necessary parts.
     public void StartLogic(int level, int interupt, int difficulty)
     {
-        StartCoroutine(CreateLogic(level));
+        currentLevel = level;
+        StartCoroutine(CreateLogic());
         if (interupt != 0)
             StartCoroutine(Interuptor(interupt));
-        antiVirus.Activate(difficulty);
+        if (difficulty != 0)
+            antiVirus.Activate(difficulty);
     }
 
-    public IEnumerator CreateLogic(int level)
+    // Create the end point of the circuit.
+    public IEnumerator CreateLogic()
     {
-        currentLevel = level;
-        if (canvas.transform.childCount != 0)
-            Destroy(canvas.transform.GetChild(0).gameObject);
-        canvas.GetComponent<RectTransform>().sizeDelta = new Vector2(1904, 1064);
-        endPoint = Instantiate(endPointPrefab, canvas.transform);
+        if (canvas.childCount != 0)
+            Destroy(canvas.GetChild(0).gameObject);
+        endPoint = Instantiate(endPointPrefab, canvas);
         endPointScript = endPoint.GetComponent<LogicEndpoint>();
-        endPointScript.parentNode = null;
-        endPointScript.currentToggle = endPoint.GetComponent<Toggle>();
+        endPointScript.SetParentNode(null);
         endPointScript.SetLogicGenerator(this);
-        endPointScript.transform.localPosition = new Vector3((level * 250) / 2, 0, 0);
+        endPointScript.transform.localPosition = new Vector3((currentLevel * 250) / 2, 0, 0);
 
-        //Call CreateRecursiveLogic Method with endPoint, level, and height = -1
-        yield return new WaitUntil(() => CreateRecursiveLogic(endPointScript, level, -1) == true);
+        // Call CreateRecursiveLogic Method with endPoint, level, and height = -1
+        yield return new WaitUntil(() => CreateRecursiveLogic(endPointScript, currentLevel, -1) == true);
 
-        while (endPointScript.GetToggleActive())
+        while (endPointScript.IsOn())
         {
             yield return new WaitUntil(() => endPointScript.Shuffle() == true);
-            Debug.Log("Shuffled");
         }
 
         endPointScript.SetActive(true);
     }
 
+    // Recurisivly creates the entire circuit.
     public bool CreateRecursiveLogic(LogicNode parentNode, int level, int height)
     {
-        //If level = 1 then
-        //Create startPoint at position height and return
-        Toggle toggle;
-
+        // If level == 1 then create startPoint at position height and return.
         if (level == 1)
         {
             GameObject startPoint = Instantiate(startPointPrefab, parentNode.gameObject.transform);
             LogicStartpoint startPointScript = startPoint.GetComponent<LogicStartpoint>();
-            startPointScript.parentNode = parentNode;
-            toggle = startPoint.GetComponent<Toggle>();
-            startPointScript.SetRandomToggle(toggle);
+            startPointScript.SetParentNode(parentNode);
             parentNode.AddInput(startPointScript);
 
-            //Set Position to the left if height = -1 (first node)
+            // Set Position to the left if height = -1 (first node)
             if (height == -1)
             {
                 startPoint.transform.localPosition = new Vector3(-250, 0, 0);
@@ -79,32 +75,20 @@ public class LogicGenerator : MonoBehaviour
             }
             else
             {
-                //Debug.Log("Level = " + level + ", y = " + (yStart[level - 1] - steps[level - 1]) + "\nyStart = " + (yStart[level - 1]) + ", step = " + (steps[level - 1])); 
                 startPoint.transform.localPosition = new Vector3(-250, (yStart[level - 1] - (steps[level - 1] * height)) * 100, 0);
                 startPointScript.SetCircuit(height, level);
             }
             return true;
         }
 
-        //Create gate node at position height, then set parent as parentNode.
-        GameObject currentPrefab;
-        if (height == -1)
-            currentPrefab = LogicGatePrefabs[Random.Range(0, 2)];
-        else
-            currentPrefab = LogicGatePrefabs[Random.Range(0, 2)];
+        // Create gate node at position height, then set parent as parentNode.
+        GameObject currentPrefab = LogicGatePrefabs[Random.Range(0, 2)];
         GameObject gateNode = Instantiate(currentPrefab, parentNode.gameObject.transform);
-      
-
-        //Debug.Log(currentPrefab.name);
         LogicNode gateNodeScript = gateNode.GetComponent(currentPrefab.name) as LogicNode;
-        //Debug.Log(gateNodeScript);
-        
-        gateNodeScript.parentNode = parentNode;
-        toggle = gateNode.GetComponent<Toggle>();
-        gateNodeScript.currentToggle = toggle;
+        gateNodeScript.SetParentNode(parentNode);
         parentNode.AddInput(gateNodeScript);
 
-        //Set Position to the left if height = -1 (first node)
+        // Set Position to the left if height = -1 (first node)
         if (height == -1)
         {
             gateNode.transform.localPosition = new Vector3(-250, 0, 0);
@@ -112,70 +96,69 @@ public class LogicGenerator : MonoBehaviour
         }
         else
         {
-            //Debug.Log("Level = " + level + ", y = " + (yStart[level - 1] - steps[level - 1]) + "\nyStart = " + (yStart[level - 1]) + ", step = " + (steps[level - 1]));
             gateNode.transform.localPosition = new Vector3(-250, (yStart[level - 1] - (steps[level - 1] * height)) * 100, 0);
             gateNodeScript.SetCircuit(height, level);
         }
 
-        //For every i in level
-        //Call CreateRecursiveLogic Method with new gate node, level - 1, and height = i.
-
+        // For every i in level, call CreateRecursiveLogic Method with new gate node, level - 1, and height = i.
         for (int i = 0; i < 2; i++)
             CreateRecursiveLogic(gateNodeScript, level - 1, i);
 
         return true;
     }
 
-    public void LogicComplete()
+    // Marks the logic as complete.
+    public void SetLogicComplete()
     {
-        Debug.Log("Logic Complete");
         logicComplete = true;
     }
 
-    public IEnumerator LogicInterupted(int severity)
+    // Distrupt and changes the logic depending on the severity given.
+    public IEnumerator InteruptLogic(int severity)
     {
-        //Debug.Log("Logic Interupted");
+        // When severity is 0, there is no penalty.
         logicComplete = false;
+        // When severity is 1, the inputs are randomised.
         if (severity == 1)
         {
             StopCoroutine(antiVirus.CreateGlitch());
             StartCoroutine(antiVirus.CreateGlitch());
             endPointScript.SetActive(false);
-
             do
             {
                 yield return new WaitUntil(() => endPointScript.Shuffle() == true);
-                //Debug.Log("Shuffled");
             }
-            while (endPointScript.GetToggleActive());
-               
+            while (endPointScript.IsOn());
             endPointScript.SetActive(true);
         }
+        // When severity is 2, the entire circuit is changed.
         else if (severity == 2)
         {
             Destroy(endPoint);
-            StartCoroutine(CreateLogic(currentLevel));
+            StartCoroutine(CreateLogic());
         }
     }
 
+    // A loop randomising the inputs after a random amount of time.
     public IEnumerator Interuptor(int value)
     {
-        yield return new WaitForSecondsRealtime((Random.value * 30) / value);
-        if (!antiVirus.GetIsSequence())
-            StartCoroutine(LogicInterupted(1));
+        yield return new WaitForSeconds(1 + ((Random.value * 30) / value));
+        if (!antiVirus.IsSequence())
+            StartCoroutine(InteruptLogic(1));
         StartCoroutine(Interuptor(value));
     }
 
+    // Controls the progress made when the logic circuit is complete.
     public void FixedUpdate()
     {
         if (logicComplete)
         {
             progress += 2f / Mathf.Pow(2, currentLevel);
-            progressBar.value = Mathf.Log10((progress + (10 * ((100 - progress)/ 100))) / 10) * 100;
-            progressPercentage.text = (int)(Mathf.Log10((progress + (10 * ((100 - progress) / 100))) / 10) * 100) + "%";
+            float falseProgress = Mathf.Log10((progress + (10 * ((100 - progress) / 100))) / 10) * 100;
+            progressBar.value = falseProgress;
+            progressPercentage.text = (int)falseProgress + "%";
             if (progress >= 100)
             {
-                Debug.Log("Puzzle Complete");
                 antiVirus.StopPrompts();
                 StopAllCoroutines();
                 Destroy(endPoint);

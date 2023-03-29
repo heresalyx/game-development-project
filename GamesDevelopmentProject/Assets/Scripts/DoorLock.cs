@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DoorLock : HackableObject
 {
+    // For every door, move door and disable identifier.
     public override void UnlockOutput()
     {
         foreach (GameObject output in outputGameObject)

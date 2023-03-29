@@ -28,7 +28,7 @@ MonoBehaviour:
     m_Value: 0.2
   Noisy:
     m_OverrideState: 1
-    m_Value: 0.0903832
+    m_Value: 0.090402216
   VerticalShift:
     m_OverrideState: 1
     m_Value: 0

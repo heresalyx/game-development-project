@@ -100,9 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7ee28babd29384bb989d058ffe7c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentNode: {fileID: 0}
-  currentToggle: {fileID: 0}
-  inputs: []
+  currentToggle: {fileID: 4789948964979783624}
   circuit: {fileID: 4275166872172438828}
 --- !u!1 &5040073935718226736
 GameObject:

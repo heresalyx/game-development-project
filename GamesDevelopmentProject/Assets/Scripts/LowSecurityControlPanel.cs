@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LowSecurityControlPanel : HackableObject
 {
+    // For every camera, make them interactable.
     public override void UnlockOutput()
     {
         foreach (GameObject output in outputGameObject)

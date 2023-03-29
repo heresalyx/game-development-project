@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using Cinemachine.PostFX;
@@ -7,13 +5,14 @@ using UnityEngine.Rendering;
 
 public class SecurityCamera : MonoBehaviour
 {
-    public Camera mainCamera;
+    private Camera mainCamera;
     public CinemachineVirtualCamera cinemachineCamera;
     public CinemachineVolumeSettings cinemachineVolume;
     public GameObject gameObjectCamera;
     public SphereCollider gameObjectCollider;
     public Canvas gameObjectCanvas;
     public RectTransform identifier;
+
     public float startXRotation;
     public float startYRotation;
 
@@ -24,6 +23,7 @@ public class SecurityCamera : MonoBehaviour
         gameObjectCanvas.planeDistance = 0.12f;
     }
 
+    // Update identifier position.
     private void Update()
     {
         if (!cinemachineCamera.enabled)
@@ -37,6 +37,7 @@ public class SecurityCamera : MonoBehaviour
         }
     }
 
+    // Toggle whether the camera is being used or not.
     public void ToggleActivation(bool value)
     {
         cinemachineCamera.enabled = value;
@@ -44,6 +45,7 @@ public class SecurityCamera : MonoBehaviour
         gameObjectCanvas.enabled = !value;
     }
 
+    // Make it possible to use this camera.
     public void MakeInteractable()
     {
         gameObjectCollider.enabled = true;
@@ -53,11 +55,6 @@ public class SecurityCamera : MonoBehaviour
     public CinemachineVirtualCamera GetCinemachineCamera()
     {
         return cinemachineCamera;
-    }
-
-    public Canvas GetCanvas()
-    {
-        return gameObjectCanvas;
     }
 
     public float GetStartYRotation()
@@ -70,7 +67,7 @@ public class SecurityCamera : MonoBehaviour
         return startXRotation;
     }
 
-    public void SetVolumeProfile(VolumeProfile profile)
+    public void SetCinemachineProfile(VolumeProfile profile)
     {
         cinemachineVolume.m_Profile = profile;
     }

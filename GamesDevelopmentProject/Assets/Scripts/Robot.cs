@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using Cinemachine.PostFX;
@@ -7,17 +5,17 @@ using UnityEngine.Rendering;
 
 public class Robot : HackableObject
 {
-    public PlayerController playerController;
+    private PlayerController playerController;
     public CharacterController characterController;
     public CinemachineVolumeSettings cinemachineVolume;
     public Transform robotHead;
 
+    // Enable its own camera on unlock.
     public override void UnlockOutput()
     {
         foreach (GameObject output in outputGameObject)
         {
             output.GetComponent<CinemachineVirtualCamera>().enabled = true;
-            //objectCollider.enabled = false;
             gameObjectCanvas.enabled = false;
         }
     }
@@ -32,29 +30,27 @@ public class Robot : HackableObject
         return robotHead;
     }
 
-    public void LinkController(PlayerController controller)
+    public void SetPlayerController(PlayerController controller)
     {
         playerController = controller;
     }
 
+    public void SetCinemachineProfile(VolumeProfile profile)
+    {
+        cinemachineVolume.m_Profile = profile;
+    }
+
+    // When entering the charging station, exit the robot view.
     private void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("Collision!!!");
-        if (collision.gameObject.tag == "ChargingStation" && gameObjectCanvas.enabled == false)
+        if (collision.gameObject.CompareTag("ChargingStation") && gameObjectCanvas.enabled == false)
         {
-            Debug.Log("Hit Charging Station");
             foreach (GameObject output in outputGameObject)
             {
                 output.GetComponent<CinemachineVirtualCamera>().enabled = false;
-                //objectCollider.enabled = true;
                 gameObjectCanvas.enabled = true;
-                playerController.ActivateCameraView();
+                playerController.ExitRobot();
             }
         }
-    }
-
-    public void SetVolumeProfile(VolumeProfile profile)
-    {
-        cinemachineVolume.m_Profile = profile;
     }
 }

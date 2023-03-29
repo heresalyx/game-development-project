@@ -1,34 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HighSecurityControlPanel : HackableObject
 {
-    public int securityState = 2;
+    private int securityState = 2;
     public RectTransform secondIdentifier;
 
+    // Change update to handle two identifiers;
     public override void Update()
     {
+        Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);
+
         if (securityState == 2)
         {
-            Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);
-
             if (newPosition.z < 0)
                 secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
             else
                 secondIdentifier.anchoredPosition = newPosition;
-            identifier.anchoredPosition = new Vector3(-300, -300, 0);
         }
 
         if (securityState == 1)
         {
-            Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);
-
             if (newPosition.z < 0)
                 identifier.anchoredPosition = new Vector3(-300, -300, 0);
             else
                 identifier.anchoredPosition = newPosition;
-            secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
         }
     }
 
@@ -37,10 +32,12 @@ public class HighSecurityControlPanel : HackableObject
         return securityState;
     }
 
+    // Decrease the security level.
     public override void UnlockOutput()
     {
         if (securityState == 2)
         {
+            secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
             securityState = 1;
         }
         else if (securityState == 1)

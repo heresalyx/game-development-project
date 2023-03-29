@@ -9,41 +9,50 @@ using UnityEngine.Rendering.Universal;
 
 public class AntiVirus : MonoBehaviour
 {
-    public bool isSequence = false;
-    public VolumeProfile hackingProfile;
-    public GlitchVolume currentGlitch;
+    public PlayerController playerController;
     public LogicGenerator logicGenerator;
+    public VolumeProfile hackingProfile;
     public Transform logicCanvas;
     public Transform sequenceCanvas;
-    public Transform sequenceParent;
     public Slider timer;
     public TextMeshProUGUI timerText;
     public GameObject promptPrefab;
-    public GameObject currentPrompt;
-    public Image promptSlider = null;
     public List<Key> keys;
-    public Queue<AntiVirusPrompt> sequence = new Queue<AntiVirusPrompt>();
+    private GlitchVolume currentGlitch;
 
-    public int currentDifficulty;
-    public float progress;
-    public bool isGlitching;
+    private GameObject currentPrompt;
+    private Image promptSlider = null;
+    private Queue<AntiVirusPrompt> sequence = new Queue<AntiVirusPrompt>();
+    private Queue<AntiVirusPrompt> sequenceBuffer = new Queue<AntiVirusPrompt>();
+    private Transform sequenceParent;
+    private bool isSequence = false;
+    private int currentDifficulty;
+    private float progress;
+    private bool isGlitching;
+    private int promptsRemaining = 0;
 
-    // Start is called before the first frame update
+    // Grab and save the glitch volume.
+    public void Start()
+    {
+        hackingProfile.TryGet<GlitchVolume>(out currentGlitch);
+    }
+
+    // Activate is called to start the anti-virus attacks for the first time in the puzzle.
     public void Activate(int difficulty)
     {
         currentDifficulty = difficulty;
         StartCoroutine(SendPrompt());
-        hackingProfile.TryGet<GlitchVolume>(out currentGlitch);
     }
 
+    // A loop sending quick-time events after a certain length of time.
     public IEnumerator SendPrompt()
     {
-        yield return new WaitForSecondsRealtime((Random.value * 50) / currentDifficulty);
+        yield return new WaitForSeconds(5 + ((Random.value * 50) / currentDifficulty));
         CreatePrompt();
-        yield return new WaitForSecondsRealtime(5);
         StartCoroutine(SendPrompt());
     }
 
+    // Create a quick-time event for the player.
     public void CreatePrompt()
     {
         currentPrompt = Instantiate(promptPrefab, logicCanvas);
@@ -51,23 +60,21 @@ public class AntiVirus : MonoBehaviour
         currentPromptScript.SetDirection(Random.Range(0, 4));
         promptSlider = currentPromptScript.GetSlider();
         sequence.Enqueue(currentPromptScript);
-        Debug.Log("Created Prompt: " + sequence.Peek().GetDirection());
     }
 
+    // Create a sequence for the player to replicate.
     public void CreateSequence()
     {
         StopPrompts();
-        StartCoroutine(logicGenerator.LogicInterupted(2));
+        StartCoroutine(logicGenerator.InteruptLogic(2));
         isSequence = true;
         sequenceCanvas.gameObject.SetActive(true);
         StartCoroutine(CreateGlitch());
-        Debug.Log("Creating Sequence");
         sequenceParent = Instantiate(new GameObject(), sequenceCanvas).transform;
         for (int i = 0; i < currentDifficulty; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                Debug.Log("Creating Prompt " + (j + 1) + " out of " + currentDifficulty);
                 currentPrompt = Instantiate(promptPrefab, sequenceParent);
                 currentPrompt.transform.localPosition = new Vector3(-500 + (250f * j), 0.0f - (250f * i), 1.0f);
                 AntiVirusPrompt currentPromptScript = currentPrompt.GetComponent<AntiVirusPrompt>();
@@ -75,48 +82,41 @@ public class AntiVirus : MonoBehaviour
                 sequence.Enqueue(currentPromptScript);
             }
         }
-
         timer.maxValue = (8 / currentDifficulty) + 2;
         progress = (8 / currentDifficulty) + 2;
-
-        foreach (AntiVirusPrompt prompt in sequence)
-        {
-            Debug.Log(prompt.GetDirection());
-        }
     }
 
+    // Handle the timer counting down when sequence is generated.
     void FixedUpdate()
     {
+        // Progress prompt timer.
         if (promptSlider != null && !isSequence)
         {
             promptSlider.fillAmount += 0.005f * currentDifficulty;
         }
+        // Progress sequence timer only if glitching has stopped.
         else if (isSequence)
         {
             if (!isGlitching)
             {
+                float progressPercentage = (timer.maxValue - progress) / timer.maxValue;
                 progress -= 0.02f;
-                timer.value = Mathf.Log10((progress + ((timer.maxValue / 10) * ((timer.maxValue - progress) / timer.maxValue))) / (timer.maxValue / 10)) * timer.maxValue;
-                timerText.text = System.String.Format("{0:F2}", progress);
-                currentGlitch.Speed.value = ((timer.maxValue - progress) / timer.maxValue) * 5;
-                currentGlitch.BlockDensity.value = (timer.maxValue - progress) / timer.maxValue;
-                currentGlitch.LineDensity.value = (timer.maxValue - progress) / timer.maxValue;
+                timer.value = Mathf.Log10((progress + ((timer.maxValue / 10) * progressPercentage)) / (timer.maxValue / 10)) * timer.maxValue;
+                timerText.text = string.Format("{0:F2}", progress);
+                currentGlitch.Speed.value = progressPercentage * 5;
+                currentGlitch.BlockDensity.value = progressPercentage;
+                currentGlitch.LineDensity.value = progressPercentage;
             }
         }
     }
 
+    // Handle the input given by the user.
     private void Update()
     {
-        if (Keyboard.current[Key.Space].wasPressedThisFrame)
-        {
-            Debug.Log("Space Pressed!!");
-        }
-
-        if (sequence.Count != 0 && !isGlitching)
+        if (sequence.Count != 0 && !isGlitching && promptsRemaining == 0 && !playerController.InMenu())
         {
             if (Keyboard.current[keys[sequence.Peek().GetDirection()]].wasPressedThisFrame || Keyboard.current[keys[sequence.Peek().GetDirection() + 4]].wasPressedThisFrame)
             {
-                Debug.Log("Correct!");
                 if (!isSequence)
                 {
                     promptSlider = null;
@@ -124,18 +124,20 @@ public class AntiVirus : MonoBehaviour
                 }
                 else
                 {
-                    sequence.Dequeue().SetCorrect();
+                    AntiVirusPrompt temp = sequence.Dequeue();
+                    temp.SetCorrect();
+                    sequenceBuffer.Enqueue(temp);
                     progress += (float)1 / currentDifficulty;
                 }
                 if (sequence.Count == 0)
                 {
-                    Debug.Log("Sequence Complete");                    
                     isSequence = false;
                     progress = 10;
                     if (sequenceParent != null)
                     {
                         Destroy(sequenceParent.gameObject);
                         sequence.Clear();
+                        sequenceBuffer.Clear();
                         currentGlitch.Active.value = false;
                         currentGlitch.Speed.value = 5;
                         currentGlitch.BlockDensity.value = 1;
@@ -147,13 +149,13 @@ public class AntiVirus : MonoBehaviour
                 else if (sequence.Count % 5 == 0)
                 {
                     sequenceParent.localPosition = new Vector3(sequenceParent.localPosition.x, sequenceParent.localPosition.y + 250f, sequenceParent.localPosition.z);
+                    sequenceBuffer.Clear();
                 }
             }
             else if (!isSequence)
             {
-                if (Keyboard.current.anyKey.wasPressedThisFrame || promptSlider.fillAmount >= 1)
+                if ((Keyboard.current.anyKey.wasPressedThisFrame && !Keyboard.current[Key.Escape].wasPressedThisFrame) || promptSlider.fillAmount >= 1)
                 {
-                    Debug.Log("Incorrect / Too Late!");
                     Destroy(sequence.Dequeue().gameObject);
                     promptSlider = null;
                     CreateSequence();
@@ -161,13 +163,32 @@ public class AntiVirus : MonoBehaviour
             }
             else
             {
-                if (Keyboard.current.anyKey.wasPressedThisFrame || progress <= 0)
+                if ((Keyboard.current.anyKey.wasPressedThisFrame && !Keyboard.current[Key.Escape].wasPressedThisFrame))
                 {
-                    Debug.Log("Incorrect / Too Late! Game Over!");
+                    promptsRemaining = sequence.Count;
+                    foreach (AntiVirusPrompt prompt in sequenceBuffer)
+                    {
+                        prompt.SetIncorrect();
+                        sequence.Enqueue(prompt);
+                    }
+                    sequenceBuffer.Clear();
+
+                    for (int i = 0; i < promptsRemaining; i++)
+                        sequence.Enqueue(sequence.Dequeue());
+                    promptsRemaining = 0;
+                }
+
+                if (progress <= 0)
+                {
                     isSequence = false;
                     progress = 10;
                     Destroy(sequenceParent.gameObject);
                     sequence.Clear();
+                    sequenceBuffer.Clear();
+                    currentGlitch.Active.value = false;
+                    currentGlitch.Speed.value = 5;
+                    currentGlitch.BlockDensity.value = 1;
+                    currentGlitch.LineDensity.value = 1;
                     sequenceCanvas.gameObject.SetActive(false);
                     Application.Quit();
                 }
@@ -175,6 +196,7 @@ public class AntiVirus : MonoBehaviour
         }
     }
 
+    // Stops all corountines running and clears any existing prompts.
     public void StopPrompts()
     {
         StopAllCoroutines();
@@ -186,11 +208,11 @@ public class AntiVirus : MonoBehaviour
         }
     }
 
+    // Creates a glitch effect which also disables input temporarily when transitioning to sequence.
     public IEnumerator CreateGlitch()
     {
         if (!isSequence)
         {
-            Debug.Log("Triggered Logic Glitch");
             currentGlitch.Active.value = true;
             yield return new WaitForSecondsRealtime(0.5f);
             currentGlitch.Active.value = false;
@@ -198,7 +220,6 @@ public class AntiVirus : MonoBehaviour
         else if (isSequence)
         {
             isGlitching = true;
-            Debug.Log("Triggered Sequence Glitch");
             currentGlitch.Speed.value = 15f;
             currentGlitch.Active.value = true;
             yield return new WaitForSecondsRealtime(0.5f);
@@ -206,7 +227,8 @@ public class AntiVirus : MonoBehaviour
         }
     }
 
-    public bool GetIsSequence()
+    // Returns isSequence.
+    public bool IsSequence()
     {
         return isSequence;
     }

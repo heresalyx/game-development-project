@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 abstract public class HackableObject : MonoBehaviour
 {
+    protected Camera mainCamera;
+    public Canvas gameObjectCanvas;
+    public RectTransform identifier;
+    public SphereCollider objectCollider;
     public GameObject[] outputGameObject;
     public int level;
     public int interupt;
     public int antiVirusDifficulty;
-    public Camera mainCamera;
-    public Canvas gameObjectCanvas;
-    public RectTransform identifier;
-    public SphereCollider objectCollider;
 
+    // Set correct distance for identifier.
     private void Start()
     {
         mainCamera = Camera.main;
@@ -20,6 +19,7 @@ abstract public class HackableObject : MonoBehaviour
         gameObjectCanvas.planeDistance = 0.28f;
     }
 
+    // Set position for the identifier.
     public virtual void Update()
     {
         Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);

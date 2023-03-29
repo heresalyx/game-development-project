@@ -28,13 +28,13 @@ MonoBehaviour:
     m_Value: 16
   BlockDensity:
     m_OverrideState: 1
-    m_Value: 0.27999973
+    m_Value: 1
   LineDensity:
     m_OverrideState: 1
-    m_Value: 0.27999973
+    m_Value: 1
   Speed:
     m_OverrideState: 1
-    m_Value: 1.3999987
+    m_Value: 5
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
