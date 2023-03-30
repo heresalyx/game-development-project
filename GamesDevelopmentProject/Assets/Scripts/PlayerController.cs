@@ -5,117 +5,114 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public LogicGenerator logicGenerator;
-    public Camera mainCamera;
+    public LogicGenerator m_logicGenerator;
+    public Camera m_mainCamera;
 
-    public GameObject cameraCanvas;
-    public GameObject cursor;
-    public TextMeshProUGUI currentTime;
-    public TextMeshProUGUI currentName;
-    public Slider currentZoom;
+    public GameObject m_cameraCanvas;
+    public GameObject m_cursor;
+    public TextMeshProUGUI m_timeText;
+    public TextMeshProUGUI m_nameText;
+    public Slider m_zoomSlider;
 
-    public GameObject logicCanvas;
+    public GameObject m_logicCanvas;
 
-    public GameObject startCanvas;
-    public GameObject deathCanvas;
-    public GameObject pauseCanvas;
+    public GameObject m_startCanvas;
+    public GameObject m_deathCanvas;
+    public GameObject m_pauseCanvas;
 
-    public VolumeProfile cameraProfile;
-    public VolumeProfile hackingProfile;
-    public VolumeProfile menuProfile;
-    public VolumeProfile robotProfile;
-    private VCRVolume currentVCR;
-    private CRTVolume currentTestVol;
+    public VolumeProfile m_cameraProfile;
+    public VolumeProfile m_hackingProfile;
+    public VolumeProfile m_menuProfile;
+    public VolumeProfile m_robotProfile;
+    private VCRVolume m_VCRVolume;
 
-    private bool inCamera = true;
-    public SecurityCamera currentCamera;
-    private HackableObject hackedObject;
-    private Robot currentRobot;
-    private CharacterController robotCharCon;
-    private Transform robotHead;
+    private int m_levelIndex = 1;
+    private bool m_inCamera = true;
+    private SecurityCamera m_securityCamera;
+    private HackableObject m_hackedObject;
+    private Robot m_robot;
+    private CharacterController m_robotController;
+    private Transform m_robotHead;
 
-    private static float moveSpeed = 25;
-    public float startXRotation;
-    public float startYRotation;
-    public float currentRotation;
-    private Vector2 currentMove;
+    private static float m_moveSpeed = 25;
+    private float m_cameraStartXRotation;
+    private float m_cameraStartYRotation;
+    private float m_cameraYRotation;
+    private Vector2 m_moveInput;
 
-    private bool inMenu = true;
-
-    // Don't destroy the player controller or main camera.
-    public void Awake()
-    {
-        DontDestroyOnLoad(mainCamera);
-        DontDestroyOnLoad(gameObject);
-    }
+    private bool m_inMenu = true;
 
     // Setup movement for first security camera.
     public void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
-        startXRotation = currentCamera.GetStartXRotation();
-        startYRotation = currentCamera.GetStartYRotation();
-        currentRotation = startYRotation;
+        m_securityCamera = GameObject.Find("StartingSecurityCamera").GetComponentInChildren<SecurityCamera>();
+        m_nameText.text = m_securityCamera.name;
+        m_zoomSlider.value = m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView;
+        m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
+        m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
+        m_cameraYRotation = m_cameraStartYRotation;
         StartCoroutine(UpdateTime());
-        cameraProfile.TryGet<VCRVolume>(out currentVCR);
+        m_cameraProfile.TryGet<VCRVolume>(out m_VCRVolume);
     }
 
     // Handle the security camera and robot movement.
     public void Update()
     {
-        if (hackedObject == null && inMenu == false)
+        if (m_hackedObject == null && m_inMenu == false)
         {
             // For cameras.
-            if (inCamera)
+            if (m_inCamera)
             {
                 // Use the y axis on currentMove to control camera zoom (FOV).
-                float yMove = currentMove[1] * Time.deltaTime * moveSpeed;
+                float yMove = m_moveInput[1] * Time.deltaTime * m_moveSpeed;
                 if (yMove > 0.01 || yMove < -0.01)
                 {
-                    float fov = currentCamera.GetCinemachineCamera().m_Lens.FieldOfView;
+                    float fov = m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView;
                     if (fov - yMove < 60 && fov - yMove > 15)
                     {
-                        currentCamera.GetCinemachineCamera().m_Lens.FieldOfView -= yMove;
-                        currentZoom.value -= yMove;
+                        m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView -= yMove;
+                        m_zoomSlider.value -= yMove;
                     }
                 }
 
                 // Use the x and y axis on currentLook to control cursor.
                 Vector3 newLook = new Vector3(Mouse.current.delta.ReadValue().x, Mouse.current.delta.ReadValue().y);
-                if (cursor.transform.localPosition.x + newLook.x > Screen.width / 2 || cursor.transform.localPosition.x + newLook.x < -Screen.width / 2)
+                if (m_cursor.transform.localPosition.x + newLook.x > Screen.width / 2 || m_cursor.transform.localPosition.x + newLook.x < -Screen.width / 2)
                     newLook.x = 0;
-                if (cursor.transform.localPosition.y + newLook.y > Screen.height / 2 || cursor.transform.localPosition.y + newLook.y < -Screen.height / 2)
+                if (m_cursor.transform.localPosition.y + newLook.y > Screen.height / 2 || m_cursor.transform.localPosition.y + newLook.y < -Screen.height / 2)
                     newLook.y = 0;
-                cursor.transform.localPosition += newLook;
+                m_cursor.transform.localPosition += newLook;
 
                 // Use the x axis on currentMove to control camera y rotation.
-                float xMove = currentMove[0] * Time.deltaTime * moveSpeed;
+                float xMove = m_moveInput[0] * Time.deltaTime * m_moveSpeed;
                 if (xMove > 0.01 || xMove < -0.01)
                 {
-                    if (currentRotation + xMove < 30 + startYRotation && currentRotation + xMove > -30 + startYRotation)
-                        currentRotation += xMove;
+                    if (m_cameraYRotation + xMove < 30 + m_cameraStartYRotation && m_cameraYRotation + xMove > -30 + m_cameraStartYRotation)
+                        m_cameraYRotation += xMove;
                 }
 
-                currentCamera.gameObject.transform.localRotation = Quaternion.Euler((-cursor.transform.localPosition.y / Screen.height * 9) + startXRotation, (cursor.transform.localPosition.x / Screen.width * 16) + currentRotation, 0f);
+                m_securityCamera.gameObject.transform.localRotation = Quaternion.Euler((-m_cursor.transform.localPosition.y / Screen.height * 9) + m_cameraStartXRotation, (m_cursor.transform.localPosition.x / Screen.width * 16) + m_cameraYRotation, 0f);
             }
             // For robots.
             else
             {
                 // Use the x and y axis on currentLook to control cursor.
                 Vector3 newRobotLook = new Vector3(0, Mouse.current.delta.ReadValue().x / 10);
-                currentRobot.transform.Rotate(newRobotLook);
+                m_robot.transform.Rotate(newRobotLook);
 
                 Vector3 newHeadLook = new Vector3(-Mouse.current.delta.ReadValue().y / 10, 0);
 
-                if (robotHead.localEulerAngles.x + newHeadLook.x > 50 && robotHead.localEulerAngles.x + newHeadLook.x < 310)
+                if (m_robotHead.localEulerAngles.x + newHeadLook.x > 50 && m_robotHead.localEulerAngles.x + newHeadLook.x < 310)
                     newHeadLook = new Vector3(0, 0);
-                robotHead.transform.Rotate(newHeadLook);
+                m_robotHead.transform.Rotate(newHeadLook);
 
-                Vector3 move = new Vector3(currentMove[1], 0, -currentMove[0]);
-                robotCharCon.Move(currentRobot.transform.TransformDirection(move * Time.deltaTime * 2));
+                Vector3 move = new Vector3(m_moveInput[0], 0, m_moveInput[1]);
+                m_robotController.Move(m_robot.transform.TransformDirection(move * Time.deltaTime * 2));
             }
         }
     }
@@ -124,18 +121,18 @@ public class PlayerController : MonoBehaviour
     public void Move(InputAction.CallbackContext value)
     {
         //Store the most recent Vector2 value from the input.
-        currentMove = value.ReadValue<Vector2>();
+        m_moveInput = value.ReadValue<Vector2>();
     }
 
     // When the interact button is clicked, find out if there was something that was clicked on.
     public void Interact(InputAction.CallbackContext value)
     {
-        if (value.started && hackedObject == null && inMenu == false)
+        if (value.started && m_hackedObject == null && m_inMenu == false)
         {
-            Ray cameraRay = mainCamera.ScreenPointToRay(new Vector3(cursor.transform.localPosition.x + (Screen.width / 2), cursor.transform.localPosition.y + (Screen.height / 2), 0));
+            Ray cameraRay = m_mainCamera.ScreenPointToRay(new Vector3(m_cursor.transform.localPosition.x + (Screen.width / 2), m_cursor.transform.localPosition.y + (Screen.height / 2), 0));
 
             // For cameras.
-            if (inCamera)
+            if (m_inCamera)
             {
                 bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit);
 
@@ -143,35 +140,35 @@ public class PlayerController : MonoBehaviour
                 {
                     StopCoroutine(CreateNoise());
                     StartCoroutine(CreateNoise());
-                    SecurityCamera previousCamera = currentCamera;
-                    currentCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
-                    startXRotation = currentCamera.GetStartXRotation();
-                    startYRotation = currentCamera.GetStartYRotation();
-                    currentRotation = startYRotation;
+                    SecurityCamera previousCamera = m_securityCamera;
+                    m_securityCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
+                    m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
+                    m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
+                    m_cameraYRotation = m_cameraStartYRotation;
 
                     previousCamera.ToggleActivation(false);
-                    currentCamera.ToggleActivation(true);
+                    m_securityCamera.ToggleActivation(true);
 
-                    currentName.text = hit.collider.name;
-                    currentZoom.value = currentCamera.GetCinemachineCamera().m_Lens.FieldOfView;
+                    m_nameText.text = hit.collider.name;
+                    m_zoomSlider.value = m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView;
                 }
 
                 if (objectHit && hit.collider.CompareTag("DoorLock"))
                 {
-                    hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
-                    LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
+                    m_hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
+                    LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
                 }
 
                 if (objectHit && hit.collider.CompareTag("LowSecurityControlPanel"))
                 {
-                    hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
-                    LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
+                    m_hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
+                    LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
                 }
 
                 if (objectHit && hit.collider.CompareTag("Robot"))
                 {
-                    hackedObject = hit.collider.gameObject.GetComponent<Robot>();
-                    LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
+                    m_hackedObject = hit.collider.gameObject.GetComponent<Robot>();
+                    LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
                 }
 
                 if (objectHit && hit.collider.CompareTag("HighSecurityControlPanel"))
@@ -179,14 +176,14 @@ public class PlayerController : MonoBehaviour
                     HighSecurityControlPanel panel = hit.collider.gameObject.GetComponent<HighSecurityControlPanel>();
                     if (panel.GetSecurityState() == 1)
                     {
-                        hackedObject = panel;
-                        LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
+                        m_hackedObject = panel;
+                        LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
 
                     }
                 }
             }
             // For robots.
-            else if (!inCamera)
+            else if (!m_inCamera)
             {
                 bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit, 1.0f);
 
@@ -195,8 +192,8 @@ public class PlayerController : MonoBehaviour
                     HighSecurityControlPanel panel = hit.collider.gameObject.GetComponent<HighSecurityControlPanel>();
                     if (panel.GetSecurityState() == 2)
                     {
-                        hackedObject = panel;
-                        LogicInit(hackedObject.GetLevel(), hackedObject.GetInterupt(), hackedObject.GetAntiVirusDifficulty());
+                        m_hackedObject = panel;
+                        LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
                     }
                 }
             }
@@ -206,46 +203,46 @@ public class PlayerController : MonoBehaviour
     // Start the Logic Generator with the parameters provided.
     public void LogicInit(int level, int interupt, int difficulty)
     {
-        cameraCanvas.SetActive(false);
-        logicCanvas.SetActive(true);
-        logicGenerator.StartLogic(level, interupt, difficulty);
+        m_cameraCanvas.SetActive(false);
+        m_logicCanvas.SetActive(true);
+        m_logicGenerator.StartLogic(level, interupt, difficulty);
         Cursor.lockState = CursorLockMode.Confined;
-        if (currentRobot != null)
-            currentRobot.SetCinemachineProfile(hackingProfile);
+        if (m_robot != null)
+            m_robot.SetCinemachineProfile(m_hackingProfile);
         else
-            currentCamera.SetCinemachineProfile(hackingProfile);
+            m_securityCamera.SetCinemachineProfile(m_hackingProfile);
     }
 
     // Handle the relation between the logic screen and the camera screen once logic has been completed.
     public void LogicComplete()
     {
-        if (currentRobot != null)
-            currentRobot.SetCinemachineProfile(robotProfile);
+        if (m_robot != null)
+            m_robot.SetCinemachineProfile(m_robotProfile);
         else
-            currentCamera.SetCinemachineProfile(cameraProfile);
-        cameraCanvas.SetActive(true);
-        logicCanvas.SetActive(false);
+            m_securityCamera.SetCinemachineProfile(m_cameraProfile);
+        m_cameraCanvas.SetActive(true);
+        m_logicCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
-        if (hackedObject.GetType().Name == "Robot")
+        if (m_hackedObject.GetType().Name == "Robot")
         {
-            currentRobot = (Robot)hackedObject;
-            robotCharCon = currentRobot.GetCharacterController();
-            robotHead = currentRobot.GetRobotHead();
-            inCamera = false;
-            cursor.transform.localPosition = Vector3.zero;
-            currentRobot.SetPlayerController(this);
+            m_robot = (Robot)m_hackedObject;
+            m_robotController = m_robot.GetCharacterController();
+            m_robotHead = m_robot.GetRobotHead();
+            m_inCamera = false;
+            m_cursor.transform.localPosition = Vector3.zero;
+            m_robot.SetPlayerController(this);
         }
-        hackedObject.UnlockOutput();
-        hackedObject = null;
+        m_hackedObject.UnlockOutput();
+        m_hackedObject = null;
     }
 
     // Return back to the cameras and unlink from the robot.
     public void ExitRobot()
     {
-        inCamera = true;
-        currentRobot = null;
-        robotCharCon = null;
-        robotHead = null;
+        m_inCamera = true;
+        m_robot = null;
+        m_robotController = null;
+        m_robotHead = null;
     }
 
     // Update the time and date text on the camera every second.
@@ -253,7 +250,7 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
-            currentTime.text = "" + System.DateTime.Now.ToString("G");
+            m_timeText.text = "" + System.DateTime.Now.ToString("G");
             yield return new WaitForSecondsRealtime(1.0f);
         }
     }
@@ -261,68 +258,114 @@ public class PlayerController : MonoBehaviour
     // Make the VCR volume sharply increase in noise before gradually decreasing.
     IEnumerator CreateNoise()
     {
-        while (currentVCR.Noisy.value < 1.5)
+        while (m_VCRVolume.Noisy.value < 1.5)
         {
-            currentVCR.Noisy.value += 0.2f;
+            m_VCRVolume.Noisy.value += 0.2f;
             yield return new WaitForSecondsRealtime(0.002f);
         }
-        while (currentVCR.Noisy.value > 0.1)
+        while (m_VCRVolume.Noisy.value > 0.1)
         {
-            currentVCR.Noisy.value -= 0.02f;
+            m_VCRVolume.Noisy.value -= 0.02f;
             yield return new WaitForSecondsRealtime(0.002f);
         }
     }
 
     public void PlayGame()
     {
-        inMenu = false;
-        startCanvas.SetActive(false);
+        m_inMenu = false;
+        m_startCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void TogglePauseMenu(InputAction.CallbackContext value)
     {
-        menuProfile.TryGet<CRTVolume>(out currentTestVol);
-        if (value.started)
+        if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
         {
-            if (inMenu)
+            if (m_inMenu)
             {
-                if (!inCamera)
+                if (!m_inCamera)
                 {
-                    if (hackedObject != null)
-                        currentRobot.SetCinemachineProfile(hackingProfile);
+                    if (m_hackedObject != null)
+                        m_robot.SetCinemachineProfile(m_hackingProfile);
                     else
-                        currentRobot.SetCinemachineProfile(robotProfile);
+                        m_robot.SetCinemachineProfile(m_robotProfile);
                 }
                 else
                 {
-                    if (hackedObject != null)
-                        currentCamera.SetCinemachineProfile(hackingProfile);
+                    if (m_hackedObject != null)
+                        m_securityCamera.SetCinemachineProfile(m_hackingProfile);
                     else
-                        currentCamera.SetCinemachineProfile(cameraProfile);
+                        m_securityCamera.SetCinemachineProfile(m_cameraProfile);
                 }
-                inMenu = false;
-                pauseCanvas.SetActive(false);
-                if (hackedObject == null)
+                m_inMenu = false;
+                m_pauseCanvas.SetActive(false);
+                if (m_hackedObject == null)
                     Cursor.lockState = CursorLockMode.Locked;
                 Time.timeScale = 1;
             }
             else
             {
-                if (inCamera)
-                    currentCamera.SetCinemachineProfile(menuProfile);
+                if (m_inCamera)
+                    m_securityCamera.SetCinemachineProfile(m_menuProfile);
                 else
-                    currentRobot.SetCinemachineProfile(menuProfile);
-                inMenu = true;
-                pauseCanvas.SetActive(true);
+                    m_robot.SetCinemachineProfile(m_menuProfile);
+                m_inMenu = true;
+                m_pauseCanvas.SetActive(true);
                 Cursor.lockState = CursorLockMode.Confined;
                 Time.timeScale = 0;
             }
         }
     }
 
+    public void KillPlayer(bool inLogic)
+    {
+        m_inMenu = true;
+        if (inLogic)
+            m_logicCanvas.SetActive(false);
+        m_deathCanvas.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
+        if (m_inCamera)
+            m_securityCamera.SetCinemachineProfile(m_menuProfile);
+        else
+            m_robot.SetCinemachineProfile(m_menuProfile);
+    }
+
+    public void RestartLevelFromUI()
+    {
+        StartCoroutine(RestartLevel());
+    }
+
+    public IEnumerator RestartLevel()
+    {
+        yield return LoadScene(m_levelIndex);
+        if (m_inCamera)
+            m_securityCamera.SetCinemachineProfile(m_cameraProfile);
+        else
+            m_robot.SetCinemachineProfile(m_robotProfile);
+        Start();
+        ExitRobot();
+        m_hackedObject = null;
+        m_inMenu = false;
+        m_deathCanvas.SetActive(false);
+        m_cameraCanvas.SetActive(true);
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public void NextLevel()
+    {
+        m_levelIndex++;
+        StartCoroutine(RestartLevel());
+    }
+
+    public IEnumerator LoadScene(int index)
+    {
+        AsyncOperation scene = SceneManager.LoadSceneAsync(index, LoadSceneMode.Single);
+        yield return new WaitUntil(() => scene.isDone == true);
+        yield return null;
+    }
+
     public bool InMenu()
     {
-        return inMenu;
+        return m_inMenu;
     }
 }

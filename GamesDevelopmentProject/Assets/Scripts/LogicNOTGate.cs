@@ -9,25 +9,25 @@ public class LogicNOTGate : LogicNode
     {
         bool isTrue = true;
 
-        foreach (LogicNode toggle in inputs)
+        foreach (LogicNode toggle in m_inputs)
         {
             if (toggle.IsOn())
                 isTrue = false;
         }
 
-        if (currentToggle.isOn != isTrue)
+        if (m_toggle.isOn != isTrue)
         {
-            currentToggle.isOn = isTrue;
-            if (currentToggle.isOn)
+            m_toggle.isOn = isTrue;
+            if (m_toggle.isOn)
             {
-                circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
+                m_circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
             }
             else
             {
-                circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
+                m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
             }
 
-            parentNode.Check();
+            m_parentNode.Check();
         }
     }
 }

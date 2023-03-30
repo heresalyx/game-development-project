@@ -836,15 +836,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5c9c8d5d9d9b44bb5d5792fb09be10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
-  cinemachineCamera: {fileID: 4505365335879895754}
-  cinemachineVolume: {fileID: 6924146502429829486}
-  gameObjectCamera: {fileID: 3026735825669026550}
-  gameObjectCollider: {fileID: 6415259130050279437}
-  gameObjectCanvas: {fileID: 6415259130083270920}
-  identifier: {fileID: 6415259128542112989}
-  startXRotation: 0
-  startYRotation: 0
+  m_cinemachineCamera: {fileID: 4505365335879895754}
+  m_cinemachineVolume: {fileID: 6924146502429829486}
+  m_gameObjectCamera: {fileID: 3026735825669026550}
+  m_gameObjectCollider: {fileID: 6415259130050279437}
+  m_gameObjectCanvas: {fileID: 6415259130083270920}
+  m_identifier: {fileID: 6415259128542112989}
+  m_startXRotation: 0
+  m_startYRotation: 0
 --- !u!1 &6415259130083270916
 GameObject:
   m_ObjectHideFlags: 0

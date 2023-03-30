@@ -348,5 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b82def26b0563974da4cfdff9eee5e26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentToggle: {fileID: 2664766026812178511}
-  circuit: {fileID: 3397295249764121417}
+  m_toggle: {fileID: 2664766026812178511}
+  m_circuit: {fileID: 3397295249764121417}
+  m_parentNode: {fileID: 0}
+  m_inputs: []

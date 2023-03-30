@@ -1,11 +1,11 @@
 public class LogicEndpoint : LogicNode
 {
-    public LogicGenerator logicGenerator;
-    private bool isActive = false;
+    private LogicGenerator m_logicGenerator;
+    private bool m_isActive = false;
 
     public void SetLogicGenerator(LogicGenerator logic)
     {
-        logicGenerator = logic;
+        m_logicGenerator = logic;
     }
 
     public override void Interact() { }
@@ -14,33 +14,33 @@ public class LogicEndpoint : LogicNode
     {
         bool isTrue = true;
 
-        foreach (LogicNode input in inputs)
+        foreach (LogicNode input in m_inputs)
         {
             if (!input.IsOn())
                 isTrue = false;
         }
 
-        currentToggle.isOn = isTrue;
+        m_toggle.isOn = isTrue;
     }
 
     // Invoked from Unity Events.
     public void CheckToggle()
     {
-        if (isActive)
+        if (m_isActive)
         {
-            if (currentToggle.isOn)
+            if (m_toggle.isOn)
             {
-                logicGenerator.SetLogicComplete();
+                m_logicGenerator.SetLogicComplete();
             }
-            if (!currentToggle.isOn)
+            if (!m_toggle.isOn)
             {
-                StartCoroutine(logicGenerator.InteruptLogic(0));
+                StartCoroutine(m_logicGenerator.InteruptLogic(0));
             }
         }
     }
 
     public void SetActive(bool value)
     {
-        isActive = value;
+        m_isActive = value;
     }
 }

@@ -5,11 +5,11 @@ public class LowSecurityControlPanel : HackableObject
     // For every camera, make them interactable.
     public override void UnlockOutput()
     {
-        foreach (GameObject output in outputGameObject)
+        foreach (GameObject output in m_outputGameObject)
         {
             output.GetComponent<SecurityCamera>().MakeInteractable();
-            objectCollider.enabled = false;
-            gameObjectCanvas.enabled = false;
+            m_objectCollider.enabled = false;
+            m_gameObjectCanvas.enabled = false;
         }
     }
 }

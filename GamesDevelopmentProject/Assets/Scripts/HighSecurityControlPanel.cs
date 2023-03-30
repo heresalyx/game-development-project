@@ -2,49 +2,50 @@ using UnityEngine;
 
 public class HighSecurityControlPanel : HackableObject
 {
-    private int securityState = 2;
-    public RectTransform secondIdentifier;
+    private int m_securityState = 2;
+    public RectTransform m_secondIdentifier;
 
     // Change update to handle two identifiers;
     public override void Update()
     {
-        Vector3 newPosition = mainCamera.WorldToScreenPoint(gameObject.transform.position);
+        Vector3 newPosition = m_mainCamera.WorldToScreenPoint(gameObject.transform.position);
 
-        if (securityState == 2)
+        if (m_securityState == 2)
         {
             if (newPosition.z < 0)
-                secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
+                m_secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
             else
-                secondIdentifier.anchoredPosition = newPosition;
+                m_secondIdentifier.anchoredPosition = newPosition;
         }
 
-        if (securityState == 1)
+        if (m_securityState == 1)
         {
             if (newPosition.z < 0)
-                identifier.anchoredPosition = new Vector3(-300, -300, 0);
+                m_identifier.anchoredPosition = new Vector3(-300, -300, 0);
             else
-                identifier.anchoredPosition = newPosition;
+                m_identifier.anchoredPosition = newPosition;
         }
     }
 
     public int GetSecurityState()
     {
-        return securityState;
+        return m_securityState;
     }
 
     // Decrease the security level.
     public override void UnlockOutput()
     {
-        if (securityState == 2)
+        if (m_securityState == 2)
         {
-            secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
-            securityState = 1;
+            m_secondIdentifier.anchoredPosition = new Vector3(-300, -300, 0);
+            m_securityState = 1;
         }
-        else if (securityState == 1)
+        else if (m_securityState == 1)
         {
             Debug.Log("You Win");
-            objectCollider.enabled = false;
-            gameObjectCanvas.enabled = false;
+            m_objectCollider.enabled = false;
+            m_gameObjectCanvas.enabled = false;
+            controllerRemoveLater.NextLevel();
         }
     }
 }

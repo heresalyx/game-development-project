@@ -195,13 +195,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed234789ffa1d00479401f592e61185a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptSlider: {fileID: 2885588775989168191}
-  currentIcon: {fileID: 2885588777492358823}
-  upArrow: {fileID: 21300000, guid: e808e3c028100144ebf86f7986bc0806, type: 3}
-  leftArrow: {fileID: 21300000, guid: 0efa2893912baac4380d1bbc7204c169, type: 3}
-  downArrow: {fileID: 21300000, guid: a8830314cf44ff345a40ece678d931a6, type: 3}
-  rightArrow: {fileID: 21300000, guid: 6f6298f5ce8efdd4abc870a0bc51b4a0, type: 3}
-  direction: 0
+  m_promptSlider: {fileID: 2885588775989168191}
+  m_currentIcon: {fileID: 2885588777492358823}
+  m_upArrow: {fileID: 21300000, guid: e808e3c028100144ebf86f7986bc0806, type: 3}
+  m_leftArrow: {fileID: 21300000, guid: 0efa2893912baac4380d1bbc7204c169, type: 3}
+  m_downArrow: {fileID: 21300000, guid: a8830314cf44ff345a40ece678d931a6, type: 3}
+  m_rightArrow: {fileID: 21300000, guid: 6f6298f5ce8efdd4abc870a0bc51b4a0, type: 3}
 --- !u!1 &2885588777492358841
 GameObject:
   m_ObjectHideFlags: 0
