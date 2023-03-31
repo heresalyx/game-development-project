@@ -16,8 +16,8 @@ public class Robot : HackableObject
         foreach (GameObject output in m_outputGameObject)
         {
             output.GetComponent<CinemachineVirtualCamera>().enabled = true;
-            m_gameObjectCanvas.enabled = false;
         }
+        m_gameObjectCanvas.enabled = false;
     }
 
     public CharacterController GetCharacterController()
@@ -50,7 +50,19 @@ public class Robot : HackableObject
                 output.GetComponent<CinemachineVirtualCamera>().enabled = false;
                 m_gameObjectCanvas.enabled = true;
                 m_playerController.ExitRobot();
+                ChargingStation station = collision.gameObject.GetComponent<ChargingStation>();
+                if (station.HasComputer())
+                {
+                    station.SetPlayerController(m_playerController);
+                    m_playerController.SetHackedObject(station);
+                    m_playerController.LogicInit(station.GetLevel(), GetInterupt(), GetAntiVirusDifficulty());
+                }
             }
         }
+    }
+
+    public override void SetIdentifierType(bool isPhysical)
+    {
+        m_digitalIdentifier.gameObject.SetActive(true);
     }
 }

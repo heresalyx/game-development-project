@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
-using UnityEngine.UI;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
@@ -16,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public GameObject m_cursor;
     public TextMeshProUGUI m_timeText;
     public TextMeshProUGUI m_nameText;
-    public Slider m_zoomSlider;
+    public TextMeshProUGUI m_liveText;
 
     public GameObject m_logicCanvas;
 
@@ -41,23 +40,22 @@ public class PlayerController : MonoBehaviour
     private static float m_moveSpeed = 25;
     private float m_cameraStartXRotation;
     private float m_cameraStartYRotation;
+    private float m_cameraXRotation;
     private float m_cameraYRotation;
     private Vector2 m_moveInput;
 
     private bool m_inMenu = true;
 
+    public void Awake()
+    {
+        StartCoroutine(UpdateTime());
+    }
+
     // Setup movement for first security camera.
     public void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
-        m_securityCamera = GameObject.Find("StartingSecurityCamera").GetComponentInChildren<SecurityCamera>();
-        m_nameText.text = m_securityCamera.name;
-        m_zoomSlider.value = m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView;
-        m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
-        m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
-        m_cameraYRotation = m_cameraStartYRotation;
-        StartCoroutine(UpdateTime());
-        m_cameraProfile.TryGet<VCRVolume>(out m_VCRVolume);
+        SetSecurityCamera(GameObject.Find("StartingSecurityCamera").GetComponentInChildren<SecurityCamera>());
     }
 
     // Handle the security camera and robot movement.
@@ -68,18 +66,6 @@ public class PlayerController : MonoBehaviour
             // For cameras.
             if (m_inCamera)
             {
-                // Use the y axis on currentMove to control camera zoom (FOV).
-                float yMove = m_moveInput[1] * Time.deltaTime * m_moveSpeed;
-                if (yMove > 0.01 || yMove < -0.01)
-                {
-                    float fov = m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView;
-                    if (fov - yMove < 60 && fov - yMove > 15)
-                    {
-                        m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView -= yMove;
-                        m_zoomSlider.value -= yMove;
-                    }
-                }
-
                 // Use the x and y axis on currentLook to control cursor.
                 Vector3 newLook = new Vector3(Mouse.current.delta.ReadValue().x, Mouse.current.delta.ReadValue().y);
                 if (m_cursor.transform.localPosition.x + newLook.x > Screen.width / 2 || m_cursor.transform.localPosition.x + newLook.x < -Screen.width / 2)
@@ -88,15 +74,25 @@ public class PlayerController : MonoBehaviour
                     newLook.y = 0;
                 m_cursor.transform.localPosition += newLook;
 
-                // Use the x axis on currentMove to control camera y rotation.
-                float xMove = m_moveInput[0] * Time.deltaTime * m_moveSpeed;
-                if (xMove > 0.01 || xMove < -0.01)
+                // Use the x and y axis on currentMove to control camera x rotation, except for webcams.
+                if (m_securityCamera.name != "Webcam")
                 {
-                    if (m_cameraYRotation + xMove < 30 + m_cameraStartYRotation && m_cameraYRotation + xMove > -30 + m_cameraStartYRotation)
-                        m_cameraYRotation += xMove;
-                }
+                    float yMove = m_moveInput[1] * Time.deltaTime * m_moveSpeed;
+                    if ((yMove > 0.01 || yMove < -0.01))
+                    {
+                        if (m_cameraXRotation - yMove < 15 + m_cameraStartXRotation && m_cameraXRotation - yMove > -15 + m_cameraStartXRotation)
+                            m_cameraXRotation -= yMove;
+                    }
 
-                m_securityCamera.gameObject.transform.localRotation = Quaternion.Euler((-m_cursor.transform.localPosition.y / Screen.height * 9) + m_cameraStartXRotation, (m_cursor.transform.localPosition.x / Screen.width * 16) + m_cameraYRotation, 0f);
+                    float xMove = m_moveInput[0] * Time.deltaTime * m_moveSpeed;
+                    if (xMove > 0.01 || xMove < -0.01)
+                    {
+                        if (m_cameraYRotation + xMove < 30 + m_cameraStartYRotation && m_cameraYRotation + xMove > -30 + m_cameraStartYRotation)
+                            m_cameraYRotation += xMove;
+                    }
+                }
+                
+                m_securityCamera.gameObject.transform.localRotation = Quaternion.Euler((-m_cursor.transform.localPosition.y / Screen.height * 9) + m_cameraXRotation, (m_cursor.transform.localPosition.x / Screen.width * 16) + m_cameraYRotation, 0f);
             }
             // For robots.
             else
@@ -145,24 +141,32 @@ public class PlayerController : MonoBehaviour
                     m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
                     m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
                     m_cameraYRotation = m_cameraStartYRotation;
+                    m_cameraXRotation = m_cameraStartXRotation;
 
                     previousCamera.ToggleActivation(false);
                     m_securityCamera.ToggleActivation(true);
 
                     m_nameText.text = hit.collider.name;
-                    m_zoomSlider.value = m_securityCamera.GetCinemachineCamera().m_Lens.FieldOfView;
                 }
 
                 if (objectHit && hit.collider.CompareTag("DoorLock"))
                 {
-                    m_hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
-                    LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
+                    DoorLock doorLock = hit.collider.gameObject.GetComponent<DoorLock>();
+                    if (!doorLock.IsPhysical())
+                    {
+                        m_hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
+                        LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
+                    }
                 }
 
                 if (objectHit && hit.collider.CompareTag("LowSecurityControlPanel"))
                 {
-                    m_hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
-                    LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
+                    LowSecurityControlPanel panel = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
+                    if (!panel.IsPhysical())
+                    {
+                        m_hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
+                        LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
+                    }
                 }
 
                 if (objectHit && hit.collider.CompareTag("Robot"))
@@ -174,7 +178,7 @@ public class PlayerController : MonoBehaviour
                 if (objectHit && hit.collider.CompareTag("HighSecurityControlPanel"))
                 {
                     HighSecurityControlPanel panel = hit.collider.gameObject.GetComponent<HighSecurityControlPanel>();
-                    if (panel.GetSecurityState() == 1)
+                    if (!panel.IsPhysical())
                     {
                         m_hackedObject = panel;
                         LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
@@ -187,10 +191,30 @@ public class PlayerController : MonoBehaviour
             {
                 bool objectHit = Physics.Raycast(cameraRay, out RaycastHit hit, 1.0f);
 
+                if (objectHit && hit.collider.CompareTag("DoorLock"))
+                {
+                    DoorLock doorLock = hit.collider.gameObject.GetComponent<DoorLock>();
+                    if (doorLock.IsPhysical())
+                    {
+                        m_hackedObject = hit.collider.gameObject.GetComponent<DoorLock>();
+                        LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
+                    }
+                }
+
+                if (objectHit && hit.collider.CompareTag("LowSecurityControlPanel"))
+                {
+                    LowSecurityControlPanel panel = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
+                    if (panel.IsPhysical())
+                    {
+                        m_hackedObject = hit.collider.gameObject.GetComponent<LowSecurityControlPanel>();
+                        LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
+                    }
+                }
+
                 if (objectHit && hit.collider.CompareTag("HighSecurityControlPanel"))
                 {
                     HighSecurityControlPanel panel = hit.collider.gameObject.GetComponent<HighSecurityControlPanel>();
-                    if (panel.GetSecurityState() == 2)
+                    if (panel.IsPhysical())
                     {
                         m_hackedObject = panel;
                         LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
@@ -223,7 +247,12 @@ public class PlayerController : MonoBehaviour
         m_cameraCanvas.SetActive(true);
         m_logicCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
-        if (m_hackedObject.GetType().Name == "Robot")
+        if (m_hackedObject.IsLevelEnd() && m_hackedObject.GetSecurityState() == 1)
+        {
+            NextLevel();
+            return;
+        }
+        else if (m_hackedObject.GetType().Name == "Robot")
         {
             m_robot = (Robot)m_hackedObject;
             m_robotController = m_robot.GetCharacterController();
@@ -251,6 +280,7 @@ public class PlayerController : MonoBehaviour
         while (true)
         {
             m_timeText.text = "" + System.DateTime.Now.ToString("G");
+            m_liveText.enabled = !m_liveText.enabled;
             yield return new WaitForSecondsRealtime(1.0f);
         }
     }
@@ -367,5 +397,23 @@ public class PlayerController : MonoBehaviour
     public bool InMenu()
     {
         return m_inMenu;
+    }
+
+    public void SetHackedObject(HackableObject hackedObject)
+    {
+        m_hackedObject = hackedObject;
+    }
+
+    public void SetSecurityCamera(SecurityCamera securityCamera)
+    {
+        m_securityCamera = securityCamera;
+        m_nameText.text = m_securityCamera.name;
+        m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
+        m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
+        m_cameraYRotation = m_cameraStartYRotation;
+        m_cameraXRotation = m_cameraStartXRotation;
+        m_cameraProfile.TryGet<VCRVolume>(out m_VCRVolume);
+        m_securityCamera.MakeInteractable();
+        m_securityCamera.ToggleActivation(true);
     }
 }

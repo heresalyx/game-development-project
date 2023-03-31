@@ -7,9 +7,10 @@ public class DoorLock : HackableObject
     {
         foreach (GameObject output in m_outputGameObject)
         {
-            output.transform.position = new Vector3(output.transform.position.x, output.transform.position.y + 2, output.transform.position.z);
-            m_objectCollider.enabled = false;
-            m_gameObjectCanvas.enabled = false;
+            StartCoroutine(output.GetComponent<DoorAnimator>().OpenDoor());
         }
+        m_objectCollider.enabled = false;
+        m_gameObjectCanvas.enabled = false;
+        m_lightIndicator.color = new Color(0, 1, 0);
     }
 }

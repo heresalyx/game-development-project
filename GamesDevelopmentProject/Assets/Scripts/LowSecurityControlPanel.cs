@@ -7,9 +7,13 @@ public class LowSecurityControlPanel : HackableObject
     {
         foreach (GameObject output in m_outputGameObject)
         {
-            output.GetComponent<SecurityCamera>().MakeInteractable();
-            m_objectCollider.enabled = false;
-            m_gameObjectCanvas.enabled = false;
+            if (output.CompareTag("SecurityCamera"))
+            {
+                output.GetComponent<SecurityCamera>().MakeInteractable();
+            }
         }
+        m_objectCollider.enabled = false;
+        m_gameObjectCanvas.enabled = false;
+        m_lightIndicator.color = new Color(0, 1, 0);
     }
 }
