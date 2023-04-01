@@ -40,8 +40,9 @@ public class ChargingStation : HackableObject
     public override void UnlockOutput()
     {
         Debug.Log("Hacked");
-        SecurityCamera temp = m_outputGameObject[0].GetComponent<SecurityCamera>();
-        m_playerController.SetSecurityCamera(temp);
+        SecurityCamera webcam = m_outputGameObject[0].GetComponent<SecurityCamera>();
+        webcam.MakeInteractable();
+        m_playerController.SetSecurityCamera(webcam);
     }
 
     public override void SetIdentifierType(bool isPhysical)

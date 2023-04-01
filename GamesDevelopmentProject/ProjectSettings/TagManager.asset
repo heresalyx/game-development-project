@@ -10,11 +10,13 @@ TagManager:
   - Robot
   - HighSecurityControlPanel
   - ChargingStation
+  - Computer
+  - SecurityGuard
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - IgnoreNavMesh
   - Water
   - UI
   - 

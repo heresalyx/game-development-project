@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
 
     private int m_levelIndex = 1;
     private bool m_inCamera = true;
-    private SecurityCamera m_securityCamera;
+    public SecurityCamera m_securityCamera;
     private HackableObject m_hackedObject;
     private Robot m_robot;
     private CharacterController m_robotController;
@@ -55,6 +55,8 @@ public class PlayerController : MonoBehaviour
     public void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
+        m_cameraProfile.TryGet(out m_VCRVolume);
+        Debug.Log(m_VCRVolume);
         SetSecurityCamera(GameObject.Find("StartingSecurityCamera").GetComponentInChildren<SecurityCamera>());
     }
 
@@ -134,19 +136,7 @@ public class PlayerController : MonoBehaviour
 
                 if (objectHit && hit.collider.CompareTag("SecurityCamera"))
                 {
-                    StopCoroutine(CreateNoise());
-                    StartCoroutine(CreateNoise());
-                    SecurityCamera previousCamera = m_securityCamera;
-                    m_securityCamera = hit.collider.gameObject.GetComponent<SecurityCamera>();
-                    m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
-                    m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
-                    m_cameraYRotation = m_cameraStartYRotation;
-                    m_cameraXRotation = m_cameraStartXRotation;
-
-                    previousCamera.ToggleActivation(false);
-                    m_securityCamera.ToggleActivation(true);
-
-                    m_nameText.text = hit.collider.name;
+                    SetSecurityCamera(hit.collider.gameObject.GetComponent<SecurityCamera>());
                 }
 
                 if (objectHit && hit.collider.CompareTag("DoorLock"))
@@ -184,6 +174,14 @@ public class PlayerController : MonoBehaviour
                         LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
 
                     }
+                }
+
+                if (objectHit && hit.collider.CompareTag("Computer"))
+                {
+                    Computer computer = hit.collider.gameObject.GetComponent<Computer>();
+                    computer.SetPlayerController(this);
+                    m_hackedObject = computer;
+                    LogicInit(m_hackedObject.GetLevel(), m_hackedObject.GetInterupt(), m_hackedObject.GetAntiVirusDifficulty());
                 }
             }
             // For robots.
@@ -406,14 +404,16 @@ public class PlayerController : MonoBehaviour
 
     public void SetSecurityCamera(SecurityCamera securityCamera)
     {
-        m_securityCamera = securityCamera;
-        m_nameText.text = m_securityCamera.name;
-        m_cameraStartXRotation = m_securityCamera.GetStartXRotation();
-        m_cameraStartYRotation = m_securityCamera.GetStartYRotation();
+        StopCoroutine(CreateNoise());
+        StartCoroutine(CreateNoise());
+        m_nameText.text = securityCamera.name;
+        m_cameraStartXRotation = securityCamera.GetStartXRotation();
+        m_cameraStartYRotation = securityCamera.GetStartYRotation();
         m_cameraYRotation = m_cameraStartYRotation;
         m_cameraXRotation = m_cameraStartXRotation;
-        m_cameraProfile.TryGet<VCRVolume>(out m_VCRVolume);
-        m_securityCamera.MakeInteractable();
+        if (m_securityCamera != null)
+            m_securityCamera.ToggleActivation(false);
+        m_securityCamera = securityCamera;
         m_securityCamera.ToggleActivation(true);
     }
 }

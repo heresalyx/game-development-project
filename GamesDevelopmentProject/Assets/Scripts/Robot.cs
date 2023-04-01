@@ -9,6 +9,7 @@ public class Robot : HackableObject
     public CharacterController m_characterController;
     public CinemachineVolumeSettings m_cinemachineVolume;
     public Transform m_robotHead;
+    private bool m_isSafe = true;
 
     // Enable its own camera on unlock.
     public override void UnlockOutput()
@@ -45,6 +46,7 @@ public class Robot : HackableObject
     {
         if (collision.gameObject.CompareTag("ChargingStation") && m_gameObjectCanvas.enabled == false)
         {
+            m_isSafe = true;
             foreach (GameObject output in m_outputGameObject)
             {
                 output.GetComponent<CinemachineVirtualCamera>().enabled = false;
@@ -59,6 +61,16 @@ public class Robot : HackableObject
                 }
             }
         }
+        else if (collision.gameObject.CompareTag("SecurityGuard") && m_gameObjectCanvas.enabled == false && !m_isSafe)
+        {
+            m_playerController.KillPlayer(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("ChargingStation"))
+            m_isSafe = false;
     }
 
     public override void SetIdentifierType(bool isPhysical)
