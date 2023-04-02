@@ -164,9 +164,9 @@ MonoBehaviour:
       m_FlipV: 0
       m_SwapUV: 0
       m_Fill: 1
-      m_Scale: {x: 1, y: 1}
-      m_Offset: {x: 0, y: 0}
-      m_Rotation: 0
+      m_Scale: {x: 2, y: 2}
+      m_Offset: {x: -0.5, y: -0.125}
+      m_Rotation: 90
       m_Anchor: 9
     m_Material: {fileID: 0}
     m_SubmeshIndex: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
       m_FlipV: 0
       m_SwapUV: 0
       m_Fill: 1
-      m_Scale: {x: 1, y: 1}
+      m_Scale: {x: 2, y: 2}
       m_Offset: {x: 0, y: 0}
       m_Rotation: 0
       m_Anchor: 9
@@ -198,7 +198,7 @@ MonoBehaviour:
       m_FlipV: 0
       m_SwapUV: 0
       m_Fill: 1
-      m_Scale: {x: 1, y: 1}
+      m_Scale: {x: 2, y: 2}
       m_Offset: {x: 0, y: 0}
       m_Rotation: 0
       m_Anchor: 9
@@ -215,7 +215,7 @@ MonoBehaviour:
       m_FlipV: 0
       m_SwapUV: 0
       m_Fill: 1
-      m_Scale: {x: 1, y: 1}
+      m_Scale: {x: 2, y: 2}
       m_Offset: {x: 0, y: 0}
       m_Rotation: 0
       m_Anchor: 9
@@ -232,7 +232,7 @@ MonoBehaviour:
       m_FlipV: 0
       m_SwapUV: 0
       m_Fill: 1
-      m_Scale: {x: 1, y: 1}
+      m_Scale: {x: 2, y: 2}
       m_Offset: {x: 0, y: 0}
       m_Rotation: 0
       m_Anchor: 9
@@ -249,7 +249,7 @@ MonoBehaviour:
       m_FlipV: 0
       m_SwapUV: 0
       m_Fill: 1
-      m_Scale: {x: 1, y: 1}
+      m_Scale: {x: 2, y: 2}
       m_Offset: {x: 0, y: 0}
       m_Rotation: 0
       m_Anchor: 9
@@ -294,37 +294,37 @@ MonoBehaviour:
   - {x: -0.0625, y: -0.125, z: 0.03125}
   - {x: 0.0625, y: -0.125, z: 0.03125}
   m_Textures0:
-  - {x: 0.0625, y: -0.125}
-  - {x: -0.0625, y: -0.125}
-  - {x: 0.0625, y: 0.125}
-  - {x: -0.0625, y: 0.125}
-  - {x: 0.03125, y: -0.125}
-  - {x: -0.03125, y: -0.125}
-  - {x: 0.03125, y: 0.125}
-  - {x: -0.03125, y: 0.125}
-  - {x: 0.0625, y: -0.125}
-  - {x: -0.0625, y: -0.125}
-  - {x: 0.0625, y: 0.125}
-  - {x: -0.0625, y: 0.125}
-  - {x: 0.03125, y: -0.125}
-  - {x: -0.03125, y: -0.125}
-  - {x: 0.03125, y: 0.125}
-  - {x: -0.03125, y: 0.125}
-  - {x: -0.0625, y: 0.03125}
-  - {x: 0.0625, y: 0.03125}
-  - {x: -0.0625, y: -0.03125}
-  - {x: 0.0625, y: -0.03125}
-  - {x: 0.0625, y: -0.03125}
-  - {x: -0.0625, y: -0.03125}
-  - {x: 0.0625, y: 0.03125}
-  - {x: -0.0625, y: 0.03125}
+  - {x: 0.25, y: 0.000000007450581}
+  - {x: 0.25, y: 0.25}
+  - {x: 0.75, y: -0.000000014901161}
+  - {x: 0.75, y: 0.25}
+  - {x: 0.0625, y: -0.25}
+  - {x: -0.0625, y: -0.25}
+  - {x: 0.0625, y: 0.25}
+  - {x: -0.0625, y: 0.25}
+  - {x: 0.125, y: -0.25}
+  - {x: -0.125, y: -0.25}
+  - {x: 0.125, y: 0.25}
+  - {x: -0.125, y: 0.25}
+  - {x: 0.0625, y: -0.25}
+  - {x: -0.0625, y: -0.25}
+  - {x: 0.0625, y: 0.25}
+  - {x: -0.0625, y: 0.25}
+  - {x: -0.125, y: 0.0625}
+  - {x: 0.125, y: 0.0625}
+  - {x: -0.125, y: -0.0625}
+  - {x: 0.125, y: -0.0625}
+  - {x: 0.125, y: -0.0625}
+  - {x: -0.125, y: -0.0625}
+  - {x: 0.125, y: 0.0625}
+  - {x: -0.125, y: 0.0625}
   m_Textures2: []
   m_Textures3: []
   m_Tangents:
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
+  - {x: 0.000000044703484, y: 1, z: 0, w: -1}
+  - {x: 0.000000022351742, y: 1, z: 0, w: -1}
+  - {x: 0.000000022351742, y: 1, z: 0, w: -1}
+  - {x: 0, y: 1, z: 0, w: -1}
   - {x: 0, y: 0, z: 1, w: -1}
   - {x: 0, y: 0, z: 1, w: -1}
   - {x: 0, y: 0, z: 1, w: -1}
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 2910
+  m_VersionIndex: 2982
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -406,7 +406,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25a9fb42d361f46ad89221f6d301e96e, type: 2}
+  - {fileID: 2100000, guid: 53ece6e57234a5643986daa204d7057a, type: 2}
+  - {fileID: 2100000, guid: 53ece6e57234a5643986daa204d7057a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -458,7 +459,7 @@ MonoBehaviour:
   m_interupt: 0
   m_antiVirusDifficulty: 0
   m_isPhysical: 0
-  controllerRemoveLater: {fileID: 0}
+  m_isLevelEnd: 0
 --- !u!135 &5765049638676131447
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -630,7 +631,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_digitalIdentifier: {fileID: 5765049638979780265}
   m_physicalIdentifier: {fileID: 0}
+  m_dockingIdentifierArrow: {fileID: 0}
   m_isPhysical: 0
+  m_isDock: 0
 --- !u!1 &6400080522517909875
 GameObject:
   m_ObjectHideFlags: 0
@@ -843,4 +846,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_digitalIdentifier: {fileID: 0}
   m_physicalIdentifier: {fileID: 8053543810340856479}
+  m_dockingIdentifierArrow: {fileID: 0}
   m_isPhysical: 1
+  m_isDock: 0

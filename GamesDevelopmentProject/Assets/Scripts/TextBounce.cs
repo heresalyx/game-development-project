@@ -14,9 +14,6 @@ public class TextBounce : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("sdfg");
-
-        Debug.Log(m_xMoveAmount * Time.unscaledDeltaTime);
         m_textTransform.localPosition = new Vector2(m_textTransform.localPosition.x + (m_xMoveAmount * Time.unscaledDeltaTime), m_textTransform.localPosition.y + (m_yMoveAmount * Time.unscaledDeltaTime));
         if (m_textTransform.localPosition.x >= Screen.width / 2 || m_textTransform.localPosition.x <= -Screen.width / 2)
             FlipX();

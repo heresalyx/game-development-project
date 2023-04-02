@@ -5,6 +5,7 @@ public class ChargingStation : HackableObject
 {
     public bool m_hasComputer;
     private PlayerController m_playerController;
+    private bool m_isBlicking;
 
     public IEnumerator BlinkIndicator()
     {
@@ -15,8 +16,9 @@ public class ChargingStation : HackableObject
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.CompareTag("Robot"))
+        if (collision.gameObject.CompareTag("Robot") && !m_isBlicking)
         {
+            m_isBlicking = true;
             StartCoroutine(BlinkIndicator());
             m_physicalIdentifier.gameObject.SetActive(false);
         }
@@ -24,8 +26,9 @@ public class ChargingStation : HackableObject
 
     private void OnTriggerExit(Collider collision)
     {
-        if (collision.gameObject.CompareTag("Robot"))
+        if (collision.gameObject.CompareTag("Robot") && m_isBlicking)
         {
+            m_isBlicking = false;
             StopAllCoroutines();
             m_lightIndicator.enabled = false;
             m_physicalIdentifier.gameObject.SetActive(true);
