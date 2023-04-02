@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     public GameObject m_startCanvas;
     public GameObject m_deathCanvas;
     public GameObject m_pauseCanvas;
+    public GameObject m_pauseMenu;
+    public GameObject m_tutorialMenu;
 
     public VolumeProfile m_cameraProfile;
     public VolumeProfile m_hackingProfile;
@@ -305,43 +307,50 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    public void TogglePauseMenu(InputAction.CallbackContext value)
+    public void TogglePauseMenuButton(InputAction.CallbackContext value)
     {
         if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
         {
-            if (m_inMenu)
+            TogglePauseMenu();
+        }
+    }
+
+    public void TogglePauseMenu()
+    {
+        if (m_inMenu)
+        {
+            if (!m_inCamera)
             {
-                if (!m_inCamera)
-                {
-                    if (m_hackedObject != null)
-                        m_robot.SetCinemachineProfile(m_hackingProfile);
-                    else
-                        m_robot.SetCinemachineProfile(m_robotProfile);
-                }
+                if (m_hackedObject != null)
+                    m_robot.SetCinemachineProfile(m_hackingProfile);
                 else
-                {
-                    if (m_hackedObject != null)
-                        m_securityCamera.SetCinemachineProfile(m_hackingProfile);
-                    else
-                        m_securityCamera.SetCinemachineProfile(m_cameraProfile);
-                }
-                m_inMenu = false;
-                m_pauseCanvas.SetActive(false);
-                if (m_hackedObject == null)
-                    Cursor.lockState = CursorLockMode.Locked;
-                Time.timeScale = 1;
+                    m_robot.SetCinemachineProfile(m_robotProfile);
             }
             else
             {
-                if (m_inCamera)
-                    m_securityCamera.SetCinemachineProfile(m_menuProfile);
+                if (m_hackedObject != null)
+                    m_securityCamera.SetCinemachineProfile(m_hackingProfile);
                 else
-                    m_robot.SetCinemachineProfile(m_menuProfile);
-                m_inMenu = true;
-                m_pauseCanvas.SetActive(true);
-                Cursor.lockState = CursorLockMode.Confined;
-                Time.timeScale = 0;
+                    m_securityCamera.SetCinemachineProfile(m_cameraProfile);
             }
+            m_inMenu = false;
+            m_pauseCanvas.SetActive(false);
+            m_tutorialMenu.SetActive(false);
+            m_pauseMenu.SetActive(true);
+            if (m_hackedObject == null)
+                Cursor.lockState = CursorLockMode.Locked;
+            Time.timeScale = 1;
+        }
+        else
+        {
+            if (m_inCamera)
+                m_securityCamera.SetCinemachineProfile(m_menuProfile);
+            else
+                m_robot.SetCinemachineProfile(m_menuProfile);
+            m_inMenu = true;
+            m_pauseCanvas.SetActive(true);
+            Cursor.lockState = CursorLockMode.Confined;
+            Time.timeScale = 0;
         }
     }
 
@@ -415,5 +424,46 @@ public class PlayerController : MonoBehaviour
             m_securityCamera.ToggleActivation(false);
         m_securityCamera = securityCamera;
         m_securityCamera.ToggleActivation(true);
+    }
+
+    public void ToggleTutorialPause(bool value)
+    {
+        if (value)
+        {
+            m_pauseMenu.SetActive(false);
+            m_tutorialMenu.SetActive(true);
+        }
+        else
+        {
+            m_tutorialMenu.SetActive(false);
+            m_pauseMenu.SetActive(true);
+        }
+    }
+
+    public void ToggleTutorialGame(InputAction.CallbackContext value)
+    {
+        if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
+        {
+            if (m_pauseCanvas.activeSelf)
+            {
+                if (m_tutorialMenu.activeSelf)
+                {
+                    m_tutorialMenu.SetActive(false);
+                    m_pauseMenu.SetActive(true);
+                    TogglePauseMenu();
+                }
+                else
+                {
+                    m_pauseMenu.SetActive(false);
+                    m_tutorialMenu.SetActive(true);
+                }
+            }
+            else
+            {
+                TogglePauseMenu();
+                m_pauseMenu.SetActive(false);
+                m_tutorialMenu.SetActive(true);
+            }
+        }
     }
 }

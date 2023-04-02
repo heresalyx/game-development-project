@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 
 public class IdentifierAnimator : MonoBehaviour
@@ -10,13 +9,13 @@ public class IdentifierAnimator : MonoBehaviour
     public Transform m_dockingIdentifierArrow;
     public bool m_isPhysical;
     public bool m_isDock;
-    private int m_timer = 100;
+    private float m_timer = 100;
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        m_timer--;
-        if (m_timer == 0)
+        m_timer -= 50 * Time.unscaledDeltaTime;
+        if (m_timer <= 0)
             m_timer = 100;
 
         if (m_isDock)
@@ -27,7 +26,7 @@ public class IdentifierAnimator : MonoBehaviour
         {
             if (m_isPhysical)
             {
-                m_physicalIdentifier.Padding = m_timer;
+                m_physicalIdentifier.Padding = (int)m_timer;
                 if (m_timer > 50)
                     m_physicalIdentifier.Thickness = (100 - m_timer) / 2;
                 else

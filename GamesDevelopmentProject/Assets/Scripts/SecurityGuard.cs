@@ -10,42 +10,56 @@ public class SecurityGuard : MonoBehaviour
     public Animator m_animator;
     public bool m_isRandom;
     private int m_currentPoint = 0;
+    private bool m_hasRequestedPoint = true;
+    private Vector3 m_currentDestination;
 
     void Start()
     {
-        PickNewDestination();
-        StartCoroutine(CheckDestination());
+        StartCoroutine(PickNewDestination());
     }
 
     // Update is called once per frame
-    private IEnumerator CheckDestination()
+    private void Update()
     {
-        while (true)
+        if (Vector3.Distance(m_currentDestination, m_pathPoints[m_currentPoint].position) > 1.0f)
         {
-            //if (NavMesh.SamplePosition(m_pathPoints[m_pathPoints.Count - 1].position, out NavMeshHit hit, 0.25f, NavMesh.AllAreas))
-            Debug.Log("test");
-            Debug.Log(!m_agent.pathPending);
-            Debug.Log(m_agent.remainingDistance < 0.1);
-            if (!m_agent.pathPending && m_agent.remainingDistance < 0.1)
-            {
-                m_animator.SetBool("is_Idle", true);
-                yield return new WaitForSeconds(3.0f);
-                PickNewDestination();
-                m_animator.SetBool("is_Idle", false);
-            }
-            yield return new WaitForSeconds(0.02f);
+            m_currentDestination = m_pathPoints[m_currentPoint].position;
+            m_agent.destination = m_currentDestination;
+        }
+
+
+        if (!m_hasRequestedPoint && !m_agent.pathPending && m_agent.remainingDistance < 0.1)
+        {
+            Debug.Log("Request");
+            m_hasRequestedPoint = true;
+            StartCoroutine(PickNewDestination());
         }
     }
 
-    private void PickNewDestination()
+    private IEnumerator PickNewDestination()
     {
-
-        m_agent.SetDestination(m_pathPoints[m_currentPoint].position);
+        m_animator.SetBool("is_Idle", true);
+        yield return new WaitForSeconds(3.0f);
+        m_animator.SetBool("is_Idle", false);
         if (m_isRandom)
-            m_currentPoint = Random.Range(0, m_pathPoints.Count);
+            m_currentPoint = Random.Range(0, m_pathPoints.Count - 1);
         else
             m_currentPoint++;
-        if (m_currentPoint >= m_pathPoints.Count)
+        if (m_currentPoint >= m_pathPoints.Count - 1)
             m_currentPoint = 0;
+        m_hasRequestedPoint = false;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        Debug.Log("Detected Trigger");
+
+        if (other.gameObject.CompareTag("Robot") && NavMesh.SamplePosition(new Vector3(other.transform.position.x, 0, other.transform.position.z), out NavMeshHit hit, 0.25f, NavMesh.AllAreas))
+        {
+            StopAllCoroutines();
+            m_animator.SetBool("is_Idle", false);
+            Debug.Log("Detected Player Trigger");
+            m_currentPoint = m_pathPoints.Count - 1;
+        }
     }
 }
