@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class LogicStartpoint : LogicNode
 {
+    public AudioClip m_logicCompleteEffect;
+    public AudioSource m_effectSource;
+
     private void Start()
     {
         Shuffle();
@@ -39,5 +42,10 @@ public class LogicStartpoint : LogicNode
             m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
         }
         return true;
+    }
+
+    public void PlayLogicCompleteEffect()
+    {
+        m_effectSource.PlayOneShot(m_logicCompleteEffect);
     }
 }
