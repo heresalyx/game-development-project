@@ -336,18 +336,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 19751372628702160}
-        m_TargetAssemblyTypeName: LogicStartpoint, Assembly-CSharp
-        m_MethodName: PlayLogicCompleteEffect
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   m_IsOn: 0
 --- !u!114 &19751372628702160
 MonoBehaviour:
@@ -365,8 +353,8 @@ MonoBehaviour:
   m_circuit: {fileID: 3397295249764121417}
   m_parentNode: {fileID: 0}
   m_inputs: []
-  m_logicCompleteEffect: {fileID: 8300000, guid: 09f3e52a66100b34ab44db5e662d7e6d,
-    type: 3}
+  m_logicOnEffect: {fileID: 8300000, guid: 0cba78c8cf8d2464eb35b9983145b47c, type: 3}
+  m_logicOffEffect: {fileID: 8300000, guid: 8fbaef52a40a40f46b2ac9248ff6de91, type: 3}
   m_effectSource: {fileID: 711067310549514485}
 --- !u!82 &711067310549514485
 AudioSource:

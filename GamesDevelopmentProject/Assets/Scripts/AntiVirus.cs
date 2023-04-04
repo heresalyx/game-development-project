@@ -9,6 +9,8 @@ using UnityEngine.Rendering.Universal;
 
 public class AntiVirus : MonoBehaviour
 {
+    public List<AudioClip> m_virusGlitchEffects;
+    public AudioSource m_effectSource;
     public PlayerController m_playerController;
     public LogicGenerator m_logicGenerator;
     public VolumeProfile m_hackingProfile;
@@ -60,6 +62,7 @@ public class AntiVirus : MonoBehaviour
         currentPromptScript.SetDirection(Random.Range(0, 4));
         m_promptSlider = currentPromptScript.GetSlider();
         m_sequence.Enqueue(currentPromptScript);
+        currentPromptScript.PlayLoadingEffect();
     }
 
     // Create a sequence for the player to replicate.
@@ -104,6 +107,7 @@ public class AntiVirus : MonoBehaviour
                 m_currentGlitch.Speed.value = progressPercentage * 5;
                 m_currentGlitch.BlockDensity.value = progressPercentage;
                 m_currentGlitch.LineDensity.value = progressPercentage;
+                m_effectSource.volume = progressPercentage;
             }
         }
     }
@@ -140,6 +144,8 @@ public class AntiVirus : MonoBehaviour
                         m_currentGlitch.Speed.value = 5;
                         m_currentGlitch.BlockDensity.value = 1;
                         m_currentGlitch.LineDensity.value = 1;
+                        m_effectSource.Stop();
+                        m_effectSource.volume = 1;
                         StartCoroutine(SendPrompt());
                     }
                     m_sequenceCanvas.gameObject.SetActive(false);
@@ -187,6 +193,8 @@ public class AntiVirus : MonoBehaviour
                     m_currentGlitch.Speed.value = 5;
                     m_currentGlitch.BlockDensity.value = 1;
                     m_currentGlitch.LineDensity.value = 1;
+                    m_effectSource.Stop();
+                    m_effectSource.volume = 1;
                     m_sequenceCanvas.gameObject.SetActive(false);
                     m_logicGenerator.ExitLogic(2);
                 }
@@ -211,6 +219,7 @@ public class AntiVirus : MonoBehaviour
     {
         if (!m_isSequence)
         {
+            m_effectSource.PlayOneShot(m_virusGlitchEffects[Random.Range(0, m_virusGlitchEffects.Count)]);
             m_currentGlitch.Active.value = true;
             yield return new WaitForSecondsRealtime(0.5f);
             m_currentGlitch.Active.value = false;
@@ -218,7 +227,9 @@ public class AntiVirus : MonoBehaviour
         else if (m_isSequence)
         {
             m_isGlitching = true;
+            m_effectSource.volume = 0.0f;
             m_currentGlitch.Speed.value = 15f;
+            m_effectSource.Play();
             m_currentGlitch.Active.value = true;
             yield return new WaitForSecondsRealtime(0.5f);
             m_isGlitching = false;

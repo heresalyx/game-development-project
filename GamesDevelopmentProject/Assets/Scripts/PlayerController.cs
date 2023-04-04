@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 {
     public LogicGenerator m_logicGenerator;
     public Camera m_mainCamera;
+    public AudioManager m_audioManager;
 
     public GameObject m_cameraCanvas;
     public GameObject m_cursor;
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject m_startCanvas;
     public GameObject m_deathCanvas;
+    public DeathScreenAnimator m_deathAnimator;
     public GameObject m_pauseCanvas;
     public GameObject m_pauseMenu;
     public GameObject m_tutorialMenu;
@@ -334,6 +336,7 @@ public class PlayerController : MonoBehaviour
                     m_securityCamera.SetCinemachineProfile(m_cameraProfile);
             }
             m_inMenu = false;
+            m_audioManager.StopAllMusic();
             m_pauseCanvas.SetActive(false);
             m_tutorialMenu.SetActive(false);
             m_pauseMenu.SetActive(true);
@@ -348,6 +351,7 @@ public class PlayerController : MonoBehaviour
             else
                 m_robot.SetCinemachineProfile(m_menuProfile);
             m_inMenu = true;
+            m_audioManager.PlayMainMenuScreenMusic();
             m_pauseCanvas.SetActive(true);
             Cursor.lockState = CursorLockMode.Confined;
             Time.timeScale = 0;
@@ -357,9 +361,12 @@ public class PlayerController : MonoBehaviour
     public void KillPlayer(bool inLogic)
     {
         m_inMenu = true;
+        m_audioManager.PlayDeathScreenMusic();
+        m_audioManager.PlayJumpscareClip();
         if (inLogic)
             m_logicCanvas.SetActive(false);
         m_deathCanvas.SetActive(true);
+        m_deathAnimator.StartAnimator();
         Cursor.lockState = CursorLockMode.Confined;
         if (m_inCamera)
             m_securityCamera.SetCinemachineProfile(m_menuProfile);
@@ -383,7 +390,9 @@ public class PlayerController : MonoBehaviour
         ExitRobot();
         m_hackedObject = null;
         m_inMenu = false;
+        m_audioManager.StopAllMusic();
         m_deathCanvas.SetActive(false);
+        m_deathAnimator.StopAnimator();
         m_cameraCanvas.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
     }

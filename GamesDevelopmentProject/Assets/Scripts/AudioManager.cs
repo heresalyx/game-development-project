@@ -1,25 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
     public AudioClip m_mainMenuMusic;
     public AudioClip m_whiteNoiseEffect;
-    public AudioClip m_logicOnEffect;
-    public AudioClip m_logicOffEffect;
-    public AudioClip m_logicCompleteEffect;
-    public AudioClip m_AntiVirusPromptEffect;
-    public AudioClip m_glitchEffect;
-    public AudioClip m_loadingEffect;
-    public AudioClip m_deathEffect;
-    public AudioClip m_deathScreenEffect;
-
-    public AudioSource m_musicSource;
+    public AudioClip m_deathScreenMusic;
+    public AudioClip m_jumpscareEffect;
     public AudioSource m_effectSource;
 
-    public void PlayLogicCompleteEffect()
+    public void PlayMainMenuScreenMusic()
     {
-        m_effectSource.PlayOneShot(m_logicCompleteEffect);
+        m_effectSource.clip = m_mainMenuMusic;
+        m_effectSource.Play();
+    }
+
+    public void PlayDeathScreenMusic()
+    {
+        m_effectSource.clip = m_deathScreenMusic;
+        m_effectSource.Play();
+    }
+
+    public void StopAllMusic()
+    {
+        m_effectSource.Stop();
+    }
+
+    public void PlayJumpscareClip()
+    {
+        m_effectSource.PlayOneShot(m_jumpscareEffect);
     }
 }

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class LogicEndpoint : LogicNode
 {
     private LogicGenerator m_logicGenerator;

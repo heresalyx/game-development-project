@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class LogicStartpoint : LogicNode
 {
-    public AudioClip m_logicCompleteEffect;
+    public AudioClip m_logicOnEffect;
+    public AudioClip m_logicOffEffect;
     public AudioSource m_effectSource;
 
     private void Start()
@@ -19,10 +20,12 @@ public class LogicStartpoint : LogicNode
         if (m_toggle.isOn)
         {
             m_circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
+            PlayLogicSwitchEffect(true);
         }
         else
         {
             m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
+            PlayLogicSwitchEffect(false);
         }
     }
 
@@ -44,8 +47,11 @@ public class LogicStartpoint : LogicNode
         return true;
     }
 
-    public void PlayLogicCompleteEffect()
+    public void PlayLogicSwitchEffect(bool isOn)
     {
-        m_effectSource.PlayOneShot(m_logicCompleteEffect);
+        if (isOn)
+            m_effectSource.PlayOneShot(m_logicOnEffect);
+        else
+            m_effectSource.PlayOneShot(m_logicOffEffect);
     }
 }

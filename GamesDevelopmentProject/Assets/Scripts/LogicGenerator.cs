@@ -6,6 +6,9 @@ using TMPro;
 
 public class LogicGenerator : MonoBehaviour
 {
+    public AudioClip m_logicProgressSound;
+    public AudioClip m_logicCompleteEffect;
+    public AudioSource m_soundSource;
     public PlayerController m_playerController;
     public AntiVirus m_antiVirus;
     public RectTransform m_logicParent;
@@ -109,6 +112,11 @@ public class LogicGenerator : MonoBehaviour
     public void SetLogicComplete()
     {
         m_isComplete = true;
+        m_soundSource.clip = m_logicProgressSound;
+        if (m_progress == 0)
+            m_soundSource.Play();
+        else
+            m_soundSource.Play();
     }
 
     // Distrupt and changes the logic depending on the severity given.
@@ -116,6 +124,7 @@ public class LogicGenerator : MonoBehaviour
     {
         // When severity is 0, there is no penalty.
         m_isComplete = false;
+        m_soundSource.Pause();
         // When severity is 1, the inputs are randomised.
         if (severity == 1)
         {
@@ -151,6 +160,7 @@ public class LogicGenerator : MonoBehaviour
     {
         if (m_isComplete)
         {
+            
             m_progress += 2f / Mathf.Pow(2, m_currentLevel);
             float falseProgress = Mathf.Log10((m_progress + (10 * ((100 - m_progress) / 100))) / 10) * 100;
             m_progressBar.value = falseProgress;
@@ -164,10 +174,13 @@ public class LogicGenerator : MonoBehaviour
 
     public void ExitLogic(int fatality)
     {
+        m_soundSource.Stop();
+        m_soundSource.PlayOneShot(m_logicCompleteEffect);
+        m_antiVirus.StopPrompts();
+        StopAllCoroutines();
+
         if (fatality == 0)
         {
-            m_antiVirus.StopPrompts();
-            StopAllCoroutines();
             Destroy(m_endPoint);
             m_playerController.LogicComplete();
             m_isComplete = false;
@@ -177,14 +190,10 @@ public class LogicGenerator : MonoBehaviour
         }
         else if (fatality == 1)
         {
-            m_antiVirus.StopPrompts();
-            StopAllCoroutines();
             StartCoroutine(InteruptLogic(1));
         }
         else
         {
-            m_antiVirus.StopPrompts();
-            StopAllCoroutines();
             Destroy(m_endPoint);
             m_isComplete = false;
             m_progress = 0;

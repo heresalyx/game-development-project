@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class AntiVirusPrompt : MonoBehaviour
 {
+    public AudioClip m_promptLoadingEffect;
+    public AudioSource m_effectSource;
     public Image m_promptSlider;
     public Image m_currentIcon;
     public Sprite m_upArrow;
@@ -66,5 +68,10 @@ public class AntiVirusPrompt : MonoBehaviour
             if (m_promptSlider.fillAmount <= 0)
                 m_isResetting = false;
         }
+    }
+
+    public void PlayLoadingEffect()
+    {
+        m_effectSource.PlayOneShot(m_promptLoadingEffect);
     }
 }
