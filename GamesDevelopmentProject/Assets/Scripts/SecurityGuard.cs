@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class SecurityGuard : MonoBehaviour
 {
+    public AudioSource m_effectSource;
     public List<Transform> m_pathPoints;
     public NavMeshAgent m_agent;
     public Animator m_animator;
@@ -13,6 +14,7 @@ public class SecurityGuard : MonoBehaviour
     private bool m_hasRequestedPoint = true;
     private Vector3 m_currentDestination;
     private static bool m_isPlayerDead = false;
+    private bool m_isPlaying = false;
 
     void Start()
     {
@@ -34,6 +36,17 @@ public class SecurityGuard : MonoBehaviour
             Debug.Log("Request");
             m_hasRequestedPoint = true;
             StartCoroutine(PickNewDestination());
+        }
+
+        if (m_animator.GetBool("is_Idle") == false && !m_isPlaying)
+        {
+            m_isPlaying = true;
+            m_effectSource.Play();
+        }
+        else if (m_animator.GetBool("is_Idle") == true && m_isPlaying)
+        {
+            m_isPlaying = false;
+            m_effectSource.Stop();
         }
     }
 

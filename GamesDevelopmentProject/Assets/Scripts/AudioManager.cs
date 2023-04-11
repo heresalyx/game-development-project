@@ -3,30 +3,36 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     public AudioClip m_mainMenuMusic;
-    public AudioClip m_whiteNoiseEffect;
+    public AudioClip m_backgroundGameMusic;
     public AudioClip m_deathScreenMusic;
-    public AudioClip m_jumpscareEffect;
+    public AudioSource m_musicSource;
     public AudioSource m_effectSource;
 
     public void PlayMainMenuScreenMusic()
     {
-        m_effectSource.clip = m_mainMenuMusic;
-        m_effectSource.Play();
+        m_musicSource.clip = m_mainMenuMusic;
+        m_musicSource.Play();
+    }
+
+    public void PlayBackgroundGameMusic()
+    {
+        m_musicSource.clip = m_backgroundGameMusic;
+        m_musicSource.Play();
     }
 
     public void PlayDeathScreenMusic()
     {
-        m_effectSource.clip = m_deathScreenMusic;
-        m_effectSource.Play();
+        m_musicSource.Stop();
+        m_musicSource.PlayOneShot(m_deathScreenMusic);
     }
 
     public void StopAllMusic()
     {
-        m_effectSource.Stop();
+        m_musicSource.Stop();
     }
 
     public void PlayJumpscareClip()
     {
-        m_effectSource.PlayOneShot(m_jumpscareEffect);
+        m_effectSource.Play();
     }
 }

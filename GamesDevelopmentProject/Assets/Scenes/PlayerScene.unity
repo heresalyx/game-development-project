@@ -1053,7 +1053,19 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 420366841}
         m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: StopAllMusic
+        m_MethodName: PlayBackgroundGameMusic
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 516272729}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: ButtonPress
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1350,6 +1362,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: ToggleTutorialPause
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 516272729}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: ButtonPress
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2445,6 +2469,7 @@ GameObject:
   - component: {fileID: 420366840}
   - component: {fileID: 420366843}
   - component: {fileID: 420366841}
+  - component: {fileID: 420366844}
   m_Layer: 0
   m_Name: AudioObject
   m_TagString: Untagged
@@ -2480,10 +2505,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mainMenuMusic: {fileID: 8300000, guid: ead7ccb786efd0142a9df382dadf018b, type: 3}
-  m_whiteNoiseEffect: {fileID: 8300000, guid: e2d441b65270dd14d9f0389c26eb28ff, type: 3}
+  m_backgroundGameMusic: {fileID: 8300000, guid: e2db45c27537ed64791018c23b1ca259,
+    type: 3}
   m_deathScreenMusic: {fileID: 8300000, guid: 1d8e67b36742dc643af5694bb83727f2, type: 3}
-  m_jumpscareEffect: {fileID: 8300000, guid: ef84abc4c74bae04e9236b0088c38218, type: 3}
-  m_effectSource: {fileID: 420366843}
+  m_musicSource: {fileID: 420366843}
+  m_effectSource: {fileID: 420366844}
 --- !u!82 &420366843
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2497,6 +2523,103 @@ AudioSource:
     type: 2}
   m_audioClip: {fileID: 8300000, guid: ead7ccb786efd0142a9df382dadf018b, type: 3}
   m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &420366844
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420366839}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 5739003380854792620, guid: 10ca3e058f8aac04f933ab394351fae5,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: ef84abc4c74bae04e9236b0088c38218, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -2986,6 +3109,11 @@ MonoBehaviour:
   m_logicGenerator: {fileID: 516272726}
   m_mainCamera: {fileID: 330585545}
   m_audioManager: {fileID: 420366841}
+  m_robotEffect: {fileID: 8300000, guid: 03e929e5ac11b6144ba108fb5c5753c7, type: 3}
+  m_cameraEffect: {fileID: 8300000, guid: a5d792062414668409a51fd521dd693d, type: 3}
+  m_whiteNoiseEffect: {fileID: 8300000, guid: c59f8f601e444bd459a2297e62ac1ae8, type: 3}
+  m_buttonPressEffect: {fileID: 8300000, guid: 0cba78c8cf8d2464eb35b9983145b47c, type: 3}
+  m_effectSource: {fileID: 516272732}
   m_cameraCanvas: {fileID: 1884527467}
   m_cursor: {fileID: 894893054}
   m_timeText: {fileID: 2019637125}
@@ -3026,9 +3154,9 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 5739003380854792620, guid: 10ca3e058f8aac04f933ab394351fae5,
     type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: a5d792062414668409a51fd521dd693d, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5108,6 +5236,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 516272729}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: ButtonPress
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1194312889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5864,6 +6004,18 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
         m_MethodName: ToggleTutorialPause
         m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 516272729}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: ButtonPress
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

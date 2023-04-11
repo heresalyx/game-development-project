@@ -11,6 +11,11 @@ public class PlayerController : MonoBehaviour
     public LogicGenerator m_logicGenerator;
     public Camera m_mainCamera;
     public AudioManager m_audioManager;
+    public AudioClip m_robotEffect;
+    public AudioClip m_cameraEffect;
+    public AudioClip m_whiteNoiseEffect;
+    public AudioClip m_buttonPressEffect;
+    public AudioSource m_effectSource;
 
     public GameObject m_cameraCanvas;
     public GameObject m_cursor;
@@ -49,6 +54,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 m_moveInput;
 
     private bool m_inMenu = true;
+    private bool m_isPlayingAudio = false;
 
     public void Awake()
     {
@@ -96,8 +102,7 @@ public class PlayerController : MonoBehaviour
                         if (m_cameraYRotation + xMove < 30 + m_cameraStartYRotation && m_cameraYRotation + xMove > -30 + m_cameraStartYRotation)
                             m_cameraYRotation += xMove;
                     }
-                }
-                
+                }                
                 m_securityCamera.gameObject.transform.localRotation = Quaternion.Euler((-m_cursor.transform.localPosition.y / Screen.height * 9) + m_cameraXRotation, (m_cursor.transform.localPosition.x / Screen.width * 16) + m_cameraYRotation, 0f);
             }
             // For robots.
@@ -116,6 +121,18 @@ public class PlayerController : MonoBehaviour
                 Vector3 move = new Vector3(m_moveInput[0], 0, m_moveInput[1]);
                 m_robotController.Move(m_robot.transform.TransformDirection(move * Time.deltaTime * 2));
             }
+
+
+            if (m_moveInput != Vector2.zero && !m_isPlayingAudio)
+            {
+                m_effectSource.Play();
+                m_isPlayingAudio = true;
+            }
+            else if (m_moveInput == Vector2.zero && m_isPlayingAudio)
+            {
+                m_effectSource.Stop();
+                m_isPlayingAudio = false;
+            }
         }
     }
 
@@ -132,6 +149,7 @@ public class PlayerController : MonoBehaviour
         if (value.started && m_hackedObject == null && m_inMenu == false)
         {
             Ray cameraRay = m_mainCamera.ScreenPointToRay(new Vector3(m_cursor.transform.localPosition.x + (Screen.width / 2), m_cursor.transform.localPosition.y + (Screen.height / 2), 0));
+            ButtonPress();
 
             // For cameras.
             if (m_inCamera)
@@ -262,6 +280,11 @@ public class PlayerController : MonoBehaviour
             m_inCamera = false;
             m_cursor.transform.localPosition = Vector3.zero;
             m_robot.SetPlayerController(this);
+            m_effectSource.clip = m_robotEffect;
+        }
+        else
+        {
+            m_effectSource.clip = m_cameraEffect;
         }
         m_hackedObject.UnlockOutput();
         m_hackedObject = null;
@@ -274,6 +297,7 @@ public class PlayerController : MonoBehaviour
         m_robot = null;
         m_robotController = null;
         m_robotHead = null;
+        m_effectSource.clip = m_cameraEffect;
     }
 
     // Update the time and date text on the camera every second.
@@ -290,6 +314,7 @@ public class PlayerController : MonoBehaviour
     // Make the VCR volume sharply increase in noise before gradually decreasing.
     IEnumerator CreateNoise()
     {
+        m_effectSource.PlayOneShot(m_whiteNoiseEffect);
         while (m_VCRVolume.Noisy.value < 1.5)
         {
             m_VCRVolume.Noisy.value += 0.2f;
@@ -313,6 +338,7 @@ public class PlayerController : MonoBehaviour
     {
         if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
         {
+            ButtonPress();
             TogglePauseMenu();
         }
     }
@@ -336,7 +362,7 @@ public class PlayerController : MonoBehaviour
                     m_securityCamera.SetCinemachineProfile(m_cameraProfile);
             }
             m_inMenu = false;
-            m_audioManager.StopAllMusic();
+            m_audioManager.PlayBackgroundGameMusic();
             m_pauseCanvas.SetActive(false);
             m_tutorialMenu.SetActive(false);
             m_pauseMenu.SetActive(true);
@@ -390,7 +416,7 @@ public class PlayerController : MonoBehaviour
         ExitRobot();
         m_hackedObject = null;
         m_inMenu = false;
-        m_audioManager.StopAllMusic();
+        m_audioManager.PlayBackgroundGameMusic();
         m_deathCanvas.SetActive(false);
         m_deathAnimator.StopAnimator();
         m_cameraCanvas.SetActive(true);
@@ -453,6 +479,7 @@ public class PlayerController : MonoBehaviour
     {
         if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
         {
+            ButtonPress();
             if (m_pauseCanvas.activeSelf)
             {
                 if (m_tutorialMenu.activeSelf)
@@ -474,5 +501,10 @@ public class PlayerController : MonoBehaviour
                 m_tutorialMenu.SetActive(true);
             }
         }
+    }
+
+    public void ButtonPress()
+    {
+        m_effectSource.PlayOneShot(m_buttonPressEffect);
     }
 }
