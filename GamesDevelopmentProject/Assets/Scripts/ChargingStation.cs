@@ -4,6 +4,7 @@ using UnityEngine;
 public class ChargingStation : HackableObject
 {
     public bool m_hasComputer;
+    public string m_textFileName;
     private PlayerController m_playerController;
     private bool m_isBlicking;
 
@@ -40,11 +41,17 @@ public class ChargingStation : HackableObject
         return m_hasComputer;
     }
 
+    public string GetTextFileName()
+    {
+        return m_textFileName;
+    }
+
     public override void UnlockOutput()
     {
         Debug.Log("Hacked");
         SecurityCamera webcam = m_outputGameObject[0].GetComponent<SecurityCamera>();
         webcam.MakeInteractable();
+        webcam.SetCinemachineProfile(null);
         m_playerController.SetSecurityCamera(webcam);
     }
 

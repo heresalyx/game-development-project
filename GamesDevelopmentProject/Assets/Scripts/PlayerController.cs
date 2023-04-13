@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public LogicGenerator m_logicGenerator;
     public Camera m_mainCamera;
     public AudioManager m_audioManager;
+    public DesktopManager m_desktopManager;
     public AudioClip m_robotEffect;
     public AudioClip m_cameraEffect;
     public AudioClip m_whiteNoiseEffect;
@@ -266,7 +267,6 @@ public class PlayerController : MonoBehaviour
             m_securityCamera.SetCinemachineProfile(m_cameraProfile);
         m_cameraCanvas.SetActive(true);
         m_logicCanvas.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
         if (m_hackedObject.IsLevelEnd() && m_hackedObject.GetSecurityState() == 1)
         {
             NextLevel();
@@ -287,7 +287,33 @@ public class PlayerController : MonoBehaviour
             m_effectSource.clip = m_cameraEffect;
         }
         m_hackedObject.UnlockOutput();
-        m_hackedObject = null;
+        bool hasComputer = false;
+        if (m_hackedObject.GetType().Name == "Computer" || m_hackedObject.GetType().Name == "ChargingStation")
+        {
+            string textFileName = null;
+            hasComputer = true;
+            if (m_hackedObject.GetType().Name == "ChargingStation")
+            {
+                ChargingStation chargingStation = (ChargingStation)m_hackedObject;
+                if (chargingStation.HasComputer())
+                {
+                    textFileName = chargingStation.GetTextFileName();
+                }
+                else
+                    hasComputer = false;
+            }
+            else
+            {
+                Computer computer = (Computer)m_hackedObject;
+                textFileName = computer.GetTextFileName();
+            }
+            m_desktopManager.DisplayDesktop(textFileName);
+        }
+        if (!hasComputer)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            m_hackedObject = null;
+        }
     }
 
     // Return back to the cameras and unlink from the robot.
@@ -443,6 +469,8 @@ public class PlayerController : MonoBehaviour
 
     public void SetHackedObject(HackableObject hackedObject)
     {
+        if (hackedObject == null)
+            m_securityCamera.SetCinemachineProfile(m_cameraProfile);
         m_hackedObject = hackedObject;
     }
 
