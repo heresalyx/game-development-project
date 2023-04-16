@@ -2353,9 +2353,7 @@ GameObject:
   - component: {fileID: 7178060165014965509}
   - component: {fileID: 5448072548009976158}
   - component: {fileID: 656986987496805228}
-  - component: {fileID: 4309527624716839292}
   - component: {fileID: 5560888507787444760}
-  - component: {fileID: 4727703743629266375}
   m_Layer: 0
   m_Name: Monitor (1)
   m_TagString: Computer
@@ -2515,27 +2513,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &4309527624716839292
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391310310544482719}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &5560888507787444760
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2544,31 +2521,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4391310310544482719}
   m_Mesh: {fileID: 0}
---- !u!114 &4727703743629266375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391310310544482719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4703a39aab8fa943b35f0a766686956, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_gameObjectCanvas: {fileID: 8980463750598973921}
-  m_digitalIdentifier: {fileID: 6791996341195894323}
-  m_physicalIdentifier: {fileID: 0}
-  m_lightIndicator: {fileID: 0}
-  m_objectCollider: {fileID: 4309527624716839292}
-  m_outputGameObject:
-  - {fileID: 8980463750632095974}
-  m_level: 2
-  m_interupt: 2
-  m_antiVirusDifficulty: 2
-  m_isPhysical: 0
-  m_isLevelEnd: 0
-  m_textFileName: 
 --- !u!1 &5739096607360489176
 GameObject:
   m_ObjectHideFlags: 0
@@ -3291,6 +3243,11 @@ PrefabInstance:
       propertyPath: m_gameObjectCollider
       value: 
       objectReference: {fileID: 7361931195460416397}
+    - target: {fileID: 4505365335879895754, guid: aaed5eefc00377a4f960ad38582667e7,
+        type: 3}
+      propertyPath: m_ComponentOwner
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5521715906647941112, guid: aaed5eefc00377a4f960ad38582667e7,
         type: 3}
       propertyPath: m_Enabled
@@ -3368,7 +3325,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6415259130050279437, guid: aaed5eefc00377a4f960ad38582667e7, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 719796933244795505, guid: aaed5eefc00377a4f960ad38582667e7, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aaed5eefc00377a4f960ad38582667e7, type: 3}
