@@ -60,6 +60,7 @@ public class PlayerController : MonoBehaviour
     public void Awake()
     {
         StartCoroutine(UpdateTime());
+        StartCoroutine(LoadScene(1));
     }
 
     // Setup movement for first security camera.
