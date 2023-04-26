@@ -38,9 +38,12 @@ public class DesktopManager : MonoBehaviour
 
     public void OpenTextFile()
     {
-        StreamReader streamReader = new StreamReader("Assets/Story/" + m_currentFileName + ".txt");
+        TextAsset textFile = Resources.Load<TextAsset>(m_currentFileName);
         m_textFile.SetActive(true);
-        m_textFileContentBox.text = streamReader.ReadToEnd();
+        m_textFileContentBox.text = textFile.text;
+        //StreamReader streamReader = new StreamReader("Assets/Story/" + m_currentFileName + ".txt");
+        //m_textFile.SetActive(true);
+        //m_textFileContentBox.text = streamReader.ReadToEnd();
     }
 
     public void CloseTextFile()
