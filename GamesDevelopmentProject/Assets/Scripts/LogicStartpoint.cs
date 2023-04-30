@@ -9,14 +9,11 @@ public class LogicStartpoint : LogicNode
     private void Start()
     {
         Shuffle();
-        m_parentNode.Check();
     }
 
     // Called from Unity Events.
     public override void Interact() 
     {
-        m_parentNode.Check();
-
         if (m_toggle.isOn)
         {
             m_circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
@@ -27,6 +24,8 @@ public class LogicStartpoint : LogicNode
             m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
             PlayLogicSwitchEffect(false);
         }
+
+        m_parentNode.Check();
     }
 
     public override void Check() {}
@@ -44,6 +43,7 @@ public class LogicStartpoint : LogicNode
             m_toggle.isOn = false;
             m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
         }
+        m_parentNode.Check();
         return true;
     }
 

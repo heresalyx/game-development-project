@@ -282,6 +282,8 @@ public class PlayerController : MonoBehaviour
             m_cursor.transform.localPosition = Vector3.zero;
             m_robot.SetPlayerController(this);
             m_effectSource.clip = m_robotEffect;
+            m_securityCamera.ToggleActivation(false);
+            m_nameText.text = "Robot";
         }
         else
         {
@@ -325,6 +327,8 @@ public class PlayerController : MonoBehaviour
         m_robotController = null;
         m_robotHead = null;
         m_effectSource.clip = m_cameraEffect;
+        m_securityCamera.ToggleActivation(true);
+        m_nameText.text = m_securityCamera.name;
     }
 
     // Update the time and date text on the camera every second.

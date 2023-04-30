@@ -18685,6 +18685,7 @@ GameObject:
   - component: {fileID: 588354620}
   - component: {fileID: 588354619}
   - component: {fileID: 588354618}
+  - component: {fileID: 588354621}
   m_Layer: 2
   m_Name: GlassWindow
   m_TagString: Untagged
@@ -19122,6 +19123,28 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!64 &588354621
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 588354616}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1705330643}
 --- !u!43 &595186305
 Mesh:
   m_ObjectHideFlags: 0
@@ -45283,7 +45306,7 @@ PrefabInstance:
     - target: {fileID: 423117160479968244, guid: aaed5eefc00377a4f960ad38582667e7,
         type: 3}
       propertyPath: m_startYRotation
-      value: 45
+      value: -45
       objectReference: {fileID: 0}
     - target: {fileID: 985310613702324553, guid: aaed5eefc00377a4f960ad38582667e7,
         type: 3}
@@ -47221,7 +47244,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-373482
+  m_Name: pb_Mesh34568
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -55656,7 +55679,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-204210
+  m_Name: pb_Mesh34498
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -65998,7 +66021,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-631966
+  m_Name: pb_Mesh-28558
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2

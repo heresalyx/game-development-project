@@ -1040,8 +1040,6 @@ MonoBehaviour:
   m_antiVirusDifficulty: 0
   m_isPhysical: 0
   m_isLevelEnd: 0
-  m_jumpscareEffect: {fileID: 8300000, guid: ef84abc4c74bae04e9236b0088c38218, type: 3}
-  m_effectSource: {fileID: 6753580606386961576}
   m_characterController: {fileID: 2226040309015414519}
   m_cinemachineVolume: {fileID: 2226040307282936522}
   m_robotHead: {fileID: 2226040307282936532}
@@ -1085,8 +1083,8 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 0.625
-  m_Radius: 0.3125
+  m_Height: 0
+  m_Radius: 0.3
   m_SlopeLimit: 0
   m_StepOffset: 0
   m_SkinWidth: 0.08

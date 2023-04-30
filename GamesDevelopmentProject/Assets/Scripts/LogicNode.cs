@@ -27,6 +27,7 @@ abstract public class LogicNode : MonoBehaviour
     public void AddInput(LogicNode input)
     {
         m_inputs.Add(input);
+        Check();
     }
 
     public bool IsOn()
