@@ -66,7 +66,6 @@ public class Robot : HackableObject
         else if (collision.gameObject.CompareTag("SecurityGuard") && m_gameObjectCanvas.enabled == false && !m_isSafe && m_isAlive)
         {
             m_isAlive = false;
-            gameObject.name = "Robot";
             Debug.Log("Kill Robot");
             m_playerController.KillPlayer(true);
         }

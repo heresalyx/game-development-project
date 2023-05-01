@@ -62,11 +62,13 @@ public class SecurityGuard : MonoBehaviour
         if (m_currentPoint >= m_pathPoints.Count - 1)
             m_currentPoint = 0;
         m_hasRequestedPoint = false;
+        m_agent.speed = 1.5f;
+        m_agent.acceleration = 1.0f;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("Detected Trigger");
+        Debug.Log("Detected Trigger Guard");
 
         if (other.gameObject.CompareTag("Robot") && NavMesh.SamplePosition(new Vector3(other.transform.position.x, 0, other.transform.position.z), out NavMeshHit hit, 0.25f, NavMesh.AllAreas) && !m_isPlayerDead)
         {
@@ -74,6 +76,9 @@ public class SecurityGuard : MonoBehaviour
             m_animator.SetBool("is_Idle", false);
             Debug.Log("Detected Player Trigger");
             m_currentPoint = m_pathPoints.Count - 1;
+            m_hasRequestedPoint = false;
+            m_agent.speed = 2.0f;
+            m_agent.acceleration = 2.0f;
         }
     }
 

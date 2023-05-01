@@ -26,12 +26,18 @@ public class PlayerController : MonoBehaviour
 
     public GameObject m_logicCanvas;
 
-    public GameObject m_startCanvas;
-    public GameObject m_deathCanvas;
+    public GameObject m_menuCanvas;
+    public GameObject m_startMenu;
+    public GameObject m_deathMenu;
     public DeathScreenAnimator m_deathAnimator;
-    public GameObject m_pauseCanvas;
     public GameObject m_pauseMenu;
     public GameObject m_tutorialMenu;
+    public GameObject m_tutorialContinueButton;
+    public GameObject m_tutorialBackButton;
+    public GameObject m_optionsMenu;
+    public GameObject m_optionsStartBackButton;
+    public GameObject m_optionsPauseBackButton;
+    public GameObject m_noInputText;
 
     public VolumeProfile m_cameraProfile;
     public VolumeProfile m_hackingProfile;
@@ -39,7 +45,7 @@ public class PlayerController : MonoBehaviour
     public VolumeProfile m_robotProfile;
     private VCRVolume m_VCRVolume;
 
-    private int m_levelIndex = 1;
+    private int m_levelIndex = 2;
     private bool m_inCamera = true;
     public SecurityCamera m_securityCamera;
     private HackableObject m_hackedObject;
@@ -59,12 +65,20 @@ public class PlayerController : MonoBehaviour
 
     public void Awake()
     {
+        m_levelIndex = PlayerPrefs.GetInt("LevelIndex", 2);
         StartCoroutine(UpdateTime());
-        StartCoroutine(LoadScene(1));
+        StartCoroutine(LoadScene(m_levelIndex));
     }
 
     // Setup movement for first security camera.
     public void Start()
+    {
+        LevelInit();
+        m_securityCamera.SetCinemachineProfile(m_menuProfile);
+        Time.timeScale = 0;
+    }
+
+    public void LevelInit()
     {
         Cursor.lockState = CursorLockMode.Confined;
         m_cameraProfile.TryGet(out m_VCRVolume);
@@ -253,6 +267,7 @@ public class PlayerController : MonoBehaviour
         m_logicCanvas.SetActive(true);
         m_logicGenerator.StartLogic(level, interupt, difficulty);
         Cursor.lockState = CursorLockMode.Confined;
+        m_effectSource.Stop();
         if (m_robot != null)
             m_robot.SetCinemachineProfile(m_hackingProfile);
         else
@@ -361,13 +376,21 @@ public class PlayerController : MonoBehaviour
     public void PlayGame()
     {
         m_inMenu = false;
-        m_startCanvas.SetActive(false);
+        m_menuCanvas.SetActive(false);
+        m_tutorialMenu.SetActive(false);
+        m_tutorialContinueButton.SetActive(false);
+        m_tutorialBackButton.SetActive(true);
+        m_optionsStartBackButton.SetActive(false);
+        m_optionsPauseBackButton.SetActive(true);
+        m_noInputText.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
+        m_securityCamera.SetCinemachineProfile(m_cameraProfile);
+        Time.timeScale = 1;
     }
 
     public void TogglePauseMenuButton(InputAction.CallbackContext value)
     {
-        if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
+        if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf)
         {
             ButtonPress();
             TogglePauseMenu();
@@ -394,9 +417,10 @@ public class PlayerController : MonoBehaviour
             }
             m_inMenu = false;
             m_audioManager.PlayBackgroundGameMusic();
-            m_pauseCanvas.SetActive(false);
+            m_menuCanvas.SetActive(false);
             m_tutorialMenu.SetActive(false);
-            m_pauseMenu.SetActive(true);
+            m_pauseMenu.SetActive(false);
+            m_optionsMenu.SetActive(false);
             if (m_hackedObject == null)
                 Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1;
@@ -409,7 +433,8 @@ public class PlayerController : MonoBehaviour
                 m_robot.SetCinemachineProfile(m_menuProfile);
             m_inMenu = true;
             m_audioManager.PlayMainMenuScreenMusic();
-            m_pauseCanvas.SetActive(true);
+            m_menuCanvas.SetActive(true);
+            m_pauseMenu.SetActive(true);
             Cursor.lockState = CursorLockMode.Confined;
             Time.timeScale = 0;
         }
@@ -420,9 +445,11 @@ public class PlayerController : MonoBehaviour
         m_inMenu = true;
         m_audioManager.PlayDeathScreenMusic();
         m_audioManager.PlayJumpscareClip();
+        m_effectSource.Stop();
         if (inLogic)
             m_logicCanvas.SetActive(false);
-        m_deathCanvas.SetActive(true);
+        m_menuCanvas.SetActive(true);
+        m_deathMenu.SetActive(true);
         m_deathAnimator.StartAnimator();
         Cursor.lockState = CursorLockMode.Confined;
         if (m_inCamera)
@@ -443,12 +470,14 @@ public class PlayerController : MonoBehaviour
             m_securityCamera.SetCinemachineProfile(m_cameraProfile);
         else
             m_robot.SetCinemachineProfile(m_robotProfile);
-        Start();
+        LevelInit();
         ExitRobot();
         m_hackedObject = null;
         m_inMenu = false;
         m_audioManager.PlayBackgroundGameMusic();
-        m_deathCanvas.SetActive(false);
+        m_menuCanvas.SetActive(false);
+        m_optionsMenu.SetActive(false);
+        m_deathMenu.SetActive(false);
         m_deathAnimator.StopAnimator();
         m_cameraCanvas.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
@@ -457,6 +486,7 @@ public class PlayerController : MonoBehaviour
     public void NextLevel()
     {
         m_levelIndex++;
+        PlayerPrefs.SetInt("LevelIndex", m_levelIndex);
         StartCoroutine(RestartLevel());
     }
 
@@ -494,6 +524,12 @@ public class PlayerController : MonoBehaviour
         m_securityCamera.ToggleActivation(true);
     }
 
+    public void ShowTutorialStart()
+    {
+        m_startMenu.SetActive(false);
+        m_tutorialMenu.SetActive(true);
+    }
+
     public void ToggleTutorialPause(bool value)
     {
         if (value)
@@ -510,34 +546,63 @@ public class PlayerController : MonoBehaviour
 
     public void ToggleTutorialGame(InputAction.CallbackContext value)
     {
-        if (value.started && !m_startCanvas.activeSelf && !m_deathCanvas.activeSelf)
+        if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf)
         {
             ButtonPress();
-            if (m_pauseCanvas.activeSelf)
+            TogglePauseMenu();
+            if (m_inMenu)
             {
-                if (m_tutorialMenu.activeSelf)
-                {
-                    m_tutorialMenu.SetActive(false);
-                    m_pauseMenu.SetActive(true);
-                    TogglePauseMenu();
-                }
-                else
-                {
-                    m_pauseMenu.SetActive(false);
-                    m_tutorialMenu.SetActive(true);
-                }
-            }
-            else
-            {
-                TogglePauseMenu();
                 m_pauseMenu.SetActive(false);
                 m_tutorialMenu.SetActive(true);
             }
         }
     }
 
+    public void ToggleOptionsPause(bool value)
+    {
+        if (value)
+        {
+            m_pauseMenu.SetActive(false);
+            m_optionsMenu.SetActive(true);
+        }
+        else
+        {
+            m_optionsMenu.SetActive(false);
+            m_pauseMenu.SetActive(true);
+        }
+    }
+
+    public void ToggleOptionsStart(bool value)
+    {
+        if (value)
+        {
+            m_startMenu.SetActive(false);
+            m_optionsMenu.SetActive(true);
+        }
+        else
+        {
+            m_optionsMenu.SetActive(false);
+            m_startMenu.SetActive(true);
+        }
+    }
+
     public void ButtonPress()
     {
         m_effectSource.PlayOneShot(m_buttonPressEffect);
+    }
+
+    public void SetLevelToDemo()
+    {
+        m_levelIndex = 1;
+        PlayGame();
+        StartCoroutine(RestartLevel());
+    }
+
+    public void ResetLevel()
+    {
+        m_levelIndex = 2;
+        PlayerPrefs.SetInt("LevelIndex", 2);
+        PlayGame();
+        StartCoroutine(RestartLevel());
     }
 }

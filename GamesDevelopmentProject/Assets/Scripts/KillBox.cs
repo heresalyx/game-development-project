@@ -6,6 +6,8 @@ public class KillBox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Detected Trigger Kill" + other.gameObject.name + ", " + other.gameObject.CompareTag("Robot"));
+
         if (other.gameObject.CompareTag("Robot") && other.gameObject.name == "ActiveRobot")
         {
             Debug.Log("Detected Robot Trigger");

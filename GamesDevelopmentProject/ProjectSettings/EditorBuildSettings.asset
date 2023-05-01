@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/PlayerScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/DemoLevel.unity
+    guid: cad8a86e53405754e9bab7c9e75c9a51
+  - enabled: 1
     path: Assets/Scenes/StartLevel.unity
     guid: 41705d55d60203b4f89a17dbb28ebc55
   - enabled: 1
