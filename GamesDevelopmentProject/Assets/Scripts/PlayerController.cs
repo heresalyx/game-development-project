@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
     public GameObject m_optionsMenu;
     public GameObject m_optionsStartBackButton;
     public GameObject m_optionsPauseBackButton;
+    public GameObject m_endMenu;
     public GameObject m_noInputText;
 
     public VolumeProfile m_cameraProfile;
@@ -390,7 +391,7 @@ public class PlayerController : MonoBehaviour
 
     public void TogglePauseMenuButton(InputAction.CallbackContext value)
     {
-        if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf)
+        if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf && !m_endMenu.activeSelf)
         {
             ButtonPress();
             TogglePauseMenu();
@@ -421,6 +422,7 @@ public class PlayerController : MonoBehaviour
             m_tutorialMenu.SetActive(false);
             m_pauseMenu.SetActive(false);
             m_optionsMenu.SetActive(false);
+            m_endMenu.SetActive(false);
             if (m_hackedObject == null)
                 Cursor.lockState = CursorLockMode.Locked;
             Time.timeScale = 1;
@@ -485,9 +487,18 @@ public class PlayerController : MonoBehaviour
 
     public void NextLevel()
     {
-        m_levelIndex++;
-        PlayerPrefs.SetInt("LevelIndex", m_levelIndex);
-        StartCoroutine(RestartLevel());
+        if (m_levelIndex == 5)
+        {
+            TogglePauseMenu();
+            m_pauseMenu.SetActive(false);
+            m_endMenu.SetActive(true);
+        }
+        else
+        {
+            m_levelIndex++;
+            PlayerPrefs.SetInt("LevelIndex", m_levelIndex);
+            StartCoroutine(RestartLevel());
+        }
     }
 
     public IEnumerator LoadScene(int index)
@@ -546,7 +557,7 @@ public class PlayerController : MonoBehaviour
 
     public void ToggleTutorialGame(InputAction.CallbackContext value)
     {
-        if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf)
+        if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf && !m_endMenu.activeSelf)
         {
             ButtonPress();
             TogglePauseMenu();
@@ -604,5 +615,10 @@ public class PlayerController : MonoBehaviour
         PlayerPrefs.SetInt("LevelIndex", 2);
         PlayGame();
         StartCoroutine(RestartLevel());
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }
