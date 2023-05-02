@@ -1,10 +1,9 @@
-using UnityEngine;
-
 public class LogicEndpoint : LogicNode
 {
     private LogicGenerator m_logicGenerator;
     private bool m_isActive = false;
 
+    // Store reference to Logic Generator.
     public void SetLogicGenerator(LogicGenerator logic)
     {
         m_logicGenerator = logic;
@@ -12,6 +11,7 @@ public class LogicEndpoint : LogicNode
 
     public override void Interact() { }
 
+    // If any inputs are off, turn off the endpoint.
     public override void Check()
     {
         bool isTrue = true;
@@ -41,6 +41,7 @@ public class LogicEndpoint : LogicNode
         }
     }
 
+    // Toggle whether the logic is ready to send back data.
     public void SetActive(bool value)
     {
         m_isActive = value;

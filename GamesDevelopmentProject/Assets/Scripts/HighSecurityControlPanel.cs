@@ -5,6 +5,7 @@ public class HighSecurityControlPanel : HackableObject
 {
     public Transform m_door;
 
+    // Set two levels of security.
     public override void Start()
     {
         base.Start();
@@ -22,13 +23,13 @@ public class HighSecurityControlPanel : HackableObject
         }
         else if (m_securityState == 1)
         {
-            Debug.Log("You Win");
             m_objectCollider.enabled = false;
             m_gameObjectCanvas.enabled = false;
             m_lightIndicator.color = new Color(0, 1, 0);
         }
     }
 
+    // Animate the front panel opening.
     public IEnumerator OpenDoor()
     {
         float count = 90;

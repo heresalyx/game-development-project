@@ -22,27 +22,31 @@ public class Robot : HackableObject
         m_gameObjectCanvas.enabled = false;
     }
 
+    // Return the robot's character controller.
     public CharacterController GetCharacterController()
     {
         return m_characterController;
     }
 
+    // Return the robot's camera.
     public Transform GetRobotHead()
     {
         return m_robotHead;
     }
 
+    // Set a reference to the Player Controller.
     public void SetPlayerController(PlayerController controller)
     {
         m_playerController = controller;
     }
 
+    // Set the profile used on the robot camera.
     public void SetCinemachineProfile(VolumeProfile profile)
     {
         m_cinemachineVolume.m_Profile = profile;
     }
 
-    // When entering the charging station, exit the robot view.
+    // When entering the charging station, exit the robot view. Else if entering the security guard, kill the player.
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.CompareTag("ChargingStation") && m_gameObjectCanvas.enabled == false)
@@ -66,11 +70,11 @@ public class Robot : HackableObject
         else if (collision.gameObject.CompareTag("SecurityGuard") && m_gameObjectCanvas.enabled == false && !m_isSafe && m_isAlive)
         {
             m_isAlive = false;
-            Debug.Log("Kill Robot");
             m_playerController.KillPlayer(true);
         }
     }
 
+    // Change name and leave the player vulnerable to capture.
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("ChargingStation"))
@@ -80,6 +84,7 @@ public class Robot : HackableObject
         }
     }
 
+    // Set the visability of the identifier.
     public override void SetIdentifierType(bool isPhysical)
     {
         m_digitalIdentifier.gameObject.SetActive(true);

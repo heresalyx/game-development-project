@@ -24,12 +24,14 @@ abstract public class LogicNode : MonoBehaviour
         return true;
     }
 
+    // Add input the node.
     public void AddInput(LogicNode input)
     {
         m_inputs.Add(input);
         Check();
     }
 
+    // Return if the node is on.
     public bool IsOn()
     {
         return m_toggle.isOn;
@@ -46,6 +48,7 @@ abstract public class LogicNode : MonoBehaviour
             m_circuit.Points = new Vector2[] { new Vector2(37, 0), new Vector2(125, 0), new Vector2(125, (50 * Mathf.Pow(2, level - 1)) - 15), new Vector2(213, (50 * Mathf.Pow(2, level - 1)) - 15) };
     }
 
+    // Set the parent of the node.
     public void SetParentNode(LogicNode parent)
     {
         m_parentNode = parent;

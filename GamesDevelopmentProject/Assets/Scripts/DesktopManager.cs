@@ -11,6 +11,7 @@ public class DesktopManager : MonoBehaviour
     public TMP_InputField m_textFileContentBox;
     private string m_currentFileName;
 
+    // Display the desktop menu with a text file path.
     public void DisplayDesktop(string fileName)
     {
         m_currentFileName = fileName;
@@ -19,6 +20,7 @@ public class DesktopManager : MonoBehaviour
         StartCoroutine(UpdateTime());
     }
 
+    // Change the time to match real-time.
     public IEnumerator UpdateTime()
     {
         m_timeText.text = System.DateTime.Now.ToShortTimeString();
@@ -26,6 +28,7 @@ public class DesktopManager : MonoBehaviour
         StartCoroutine(UpdateTime());
     }
 
+    // Hide the desktop menu.
     public void HideDesktop()
     {
         m_currentFileName = null;
@@ -35,16 +38,15 @@ public class DesktopManager : MonoBehaviour
         StopAllCoroutines();
     }
 
+    // Open, read, and display the text file.
     public void OpenTextFile()
     {
         TextAsset textFile = Resources.Load<TextAsset>(m_currentFileName);
         m_textFile.SetActive(true);
         m_textFileContentBox.text = textFile.text;
-        //StreamReader streamReader = new StreamReader("Assets/Story/" + m_currentFileName + ".txt");
-        //m_textFile.SetActive(true);
-        //m_textFileContentBox.text = streamReader.ReadToEnd();
     }
 
+    // Close the text file.
     public void CloseTextFile()
     {
         m_textFileContentBox.text = "";

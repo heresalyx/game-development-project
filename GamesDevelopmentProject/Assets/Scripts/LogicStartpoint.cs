@@ -6,6 +6,7 @@ public class LogicStartpoint : LogicNode
     public AudioClip m_logicOffEffect;
     public AudioSource m_effectSource;
 
+    // Randomise the toggle at start.
     private void Start()
     {
         Shuffle();
@@ -47,6 +48,7 @@ public class LogicStartpoint : LogicNode
         return true;
     }
 
+    // Play sound effect on toggle.
     public void PlayLogicSwitchEffect(bool isOn)
     {
         if (isOn)

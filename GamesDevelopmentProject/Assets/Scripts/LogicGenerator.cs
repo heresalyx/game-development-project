@@ -160,7 +160,6 @@ public class LogicGenerator : MonoBehaviour
     {
         if (m_isComplete)
         {
-            
             m_progress += 2f / Mathf.Pow(2, m_currentLevel);
             float falseProgress = Mathf.Log10((m_progress + (10 * ((100 - m_progress) / 100))) / 10) * 100;
             m_progressBar.value = falseProgress;
@@ -172,6 +171,7 @@ public class LogicGenerator : MonoBehaviour
         }
     }
 
+    // Handles all end scenarios of the logic.
     public void ExitLogic(int fatality)
     {
         m_soundSource.Stop();
@@ -179,7 +179,7 @@ public class LogicGenerator : MonoBehaviour
         m_antiVirus.StopPrompts();
         StopAllCoroutines();
 
-        if (fatality == 0)
+        if (fatality == 0)    // If 0, reset the logic and continue game as normal.
         {
             Destroy(m_endPoint);
             m_playerController.LogicComplete();
@@ -188,11 +188,11 @@ public class LogicGenerator : MonoBehaviour
             m_progressBar.value = 0;
             m_progressPercentage.text = "0%";
         }
-        else if (fatality == 1)
+        else if (fatality == 1)    // If 1, interupt the logic.
         {
             StartCoroutine(InteruptLogic(1));
         }
-        else
+        else    // If 2, reset the logic and kill the player.
         {
             Destroy(m_endPoint);
             m_isComplete = false;

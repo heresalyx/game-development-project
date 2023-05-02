@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour
     private bool m_inMenu = true;
     private bool m_isPlayingAudio = false;
 
+    // Load player progress from PlayerPrefs, update the time, and load the relevant level.
     public void Awake()
     {
         m_levelIndex = PlayerPrefs.GetInt("LevelIndex", 2);
@@ -79,11 +80,11 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    // Prepare the level for play.
     public void LevelInit()
     {
         Cursor.lockState = CursorLockMode.Confined;
         m_cameraProfile.TryGet(out m_VCRVolume);
-        Debug.Log(m_VCRVolume);
         SetSecurityCamera(GameObject.Find("StartingSecurityCamera").GetComponentInChildren<SecurityCamera>());
     }
 
@@ -139,7 +140,7 @@ public class PlayerController : MonoBehaviour
                 m_robotController.Move(m_robot.transform.TransformDirection(move * Time.deltaTime * 2));
             }
 
-
+            // Play sound effect if the player is moving.
             if (m_moveInput != Vector2.zero && !m_isPlayingAudio)
             {
                 m_effectSource.Play();
@@ -374,6 +375,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //Transition from the start menu into the game.
     public void PlayGame()
     {
         m_inMenu = false;
@@ -389,6 +391,7 @@ public class PlayerController : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    // Toggle pause menu on button press.
     public void TogglePauseMenuButton(InputAction.CallbackContext value)
     {
         if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf && !m_endMenu.activeSelf)
@@ -398,6 +401,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Toggle between the pause menu and the game.
     public void TogglePauseMenu()
     {
         if (m_inMenu)
@@ -442,6 +446,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Kill and reset the player, display and play jumpscare.
     public void KillPlayer(bool inLogic)
     {
         m_inMenu = true;
@@ -460,11 +465,13 @@ public class PlayerController : MonoBehaviour
             m_robot.SetCinemachineProfile(m_menuProfile);
     }
 
+    // Restart level through a UI button.
     public void RestartLevelFromUI()
     {
         StartCoroutine(RestartLevel());
     }
 
+    // Reset player and level.
     public IEnumerator RestartLevel()
     {
         yield return LoadScene(m_levelIndex);
@@ -485,6 +492,7 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    // Advance to the next level, if already on te last level, display credits.
     public void NextLevel()
     {
         if (m_levelIndex == 5)
@@ -501,6 +509,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Load scene by index.
     public IEnumerator LoadScene(int index)
     {
         AsyncOperation scene = SceneManager.LoadSceneAsync(index, LoadSceneMode.Single);
@@ -508,11 +517,13 @@ public class PlayerController : MonoBehaviour
         yield return null;
     }
 
+    // Returns if the player is in the menu.
     public bool InMenu()
     {
         return m_inMenu;
     }
 
+    // Set the current object being hacked.
     public void SetHackedObject(HackableObject hackedObject)
     {
         if (hackedObject == null)
@@ -520,6 +531,7 @@ public class PlayerController : MonoBehaviour
         m_hackedObject = hackedObject;
     }
 
+    // Set the security camera the player is using.
     public void SetSecurityCamera(SecurityCamera securityCamera)
     {
         StopCoroutine(CreateNoise());
@@ -535,12 +547,14 @@ public class PlayerController : MonoBehaviour
         m_securityCamera.ToggleActivation(true);
     }
 
+    // Transition from the start menu to the tutorial.
     public void ShowTutorialStart()
     {
         m_startMenu.SetActive(false);
         m_tutorialMenu.SetActive(true);
     }
 
+    // Toggle the tutorial from the pause menu.
     public void ToggleTutorialPause(bool value)
     {
         if (value)
@@ -555,6 +569,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Toggle the tutorial from the game.
     public void ToggleTutorialGame(InputAction.CallbackContext value)
     {
         if (value.started && !m_startMenu.activeSelf && !m_deathMenu.activeSelf && !m_tutorialContinueButton.activeSelf && !m_endMenu.activeSelf)
@@ -569,6 +584,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Toggle the options menu from the pause menu.
     public void ToggleOptionsPause(bool value)
     {
         if (value)
@@ -583,6 +599,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Toggle the options menu from the start.
     public void ToggleOptionsStart(bool value)
     {
         if (value)
@@ -597,11 +614,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Play sound effect for pressing a button.
     public void ButtonPress()
     {
         m_effectSource.PlayOneShot(m_buttonPressEffect);
     }
 
+    // Set the current level to the demo scene.
     public void SetLevelToDemo()
     {
         m_levelIndex = 1;
@@ -609,6 +628,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(RestartLevel());
     }
 
+    // Reset the player's progress.
     public void ResetLevel()
     {
         m_levelIndex = 2;
@@ -617,6 +637,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(RestartLevel());
     }
 
+    // Exit the game.
     public void ExitGame()
     {
         Application.Quit();

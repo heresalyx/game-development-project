@@ -16,6 +16,7 @@ public class SecurityCamera : MonoBehaviour
     public float m_startXRotation;
     public float m_startYRotation;
 
+    // Setup the camera.
     private void Start()
     {
         m_mainCamera = Camera.main;
@@ -52,21 +53,25 @@ public class SecurityCamera : MonoBehaviour
         m_gameObjectCanvas.enabled = true;
     }
 
+    // Return camera.
     public CinemachineVirtualCamera GetCinemachineCamera()
     {
         return m_cinemachineCamera;
     }
 
+    // Return the Y rotation of the camera.
     public float GetStartYRotation()
     {
         return m_startYRotation;
     }
 
+    // Return the X rotation of the camera.
     public float GetStartXRotation()
     {
         return m_startXRotation;
     }
 
+    // Set the profile used on the camera.
     public void SetCinemachineProfile(VolumeProfile profile)
     {
         m_cinemachineVolume.m_Profile = profile;

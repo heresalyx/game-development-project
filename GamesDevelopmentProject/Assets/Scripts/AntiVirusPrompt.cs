@@ -36,6 +36,7 @@ public class AntiVirusPrompt : MonoBehaviour
         m_promptSlider.fillAmount = 0;
     }
 
+    //Stops resetting and changes the colour to green.
     public void SetCorrect()
     {
         m_isResetting = false;
@@ -43,17 +44,20 @@ public class AntiVirusPrompt : MonoBehaviour
         m_promptSlider.fillAmount = 100;
     }
 
+    //Change the colour to red, allow resetting.
     public void SetIncorrect()
     {
         m_isResetting = true;
         m_promptSlider.color = new Color(1, 0, 0);
     }
 
+    // Get slider.
     public Image GetSlider()
     {
         return m_promptSlider;
     }
 
+    // Get direction.
     public int GetDirection()
     {
         return m_direction;
@@ -70,6 +74,7 @@ public class AntiVirusPrompt : MonoBehaviour
         }
     }
 
+    // Play sound effect when prompt appears as quick-time event.
     public void PlayLoadingEffect()
     {
         m_effectSource.PlayOneShot(m_promptLoadingEffect);

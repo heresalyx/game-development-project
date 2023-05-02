@@ -1,11 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DoorAnimator : MonoBehaviour
 {
     public Transform m_door;
 
+    // Animate the door rotating open.
     public IEnumerator OpenDoor()
     {
         float count = 90;

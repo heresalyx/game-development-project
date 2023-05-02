@@ -11,7 +11,7 @@ public class IdentifierAnimator : MonoBehaviour
     public bool m_isDock;
     private float m_timer = 100;
 
-    // Update is called once per frame
+    // Animate the text or UI of the identifiers.
     void Update()
     {
         m_timer -= 50 * Time.unscaledDeltaTime;

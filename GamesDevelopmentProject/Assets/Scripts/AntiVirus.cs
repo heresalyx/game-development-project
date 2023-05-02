@@ -117,6 +117,7 @@ public class AntiVirus : MonoBehaviour
     {
         if (m_sequence.Count != 0 && !m_isGlitching && m_promptsRemaining == 0 && !m_playerController.InMenu())
         {
+            // If correct key is pressed, mark as correct and move on with the sequence. Or if a prompt, delete the GameObject.
             if (Keyboard.current[m_keys[m_sequence.Peek().GetDirection()]].wasPressedThisFrame || Keyboard.current[m_keys[m_sequence.Peek().GetDirection() + 4]].wasPressedThisFrame)
             {
                 if (!m_isSequence)
@@ -158,6 +159,7 @@ public class AntiVirus : MonoBehaviour
             }
             else if (!m_isSequence)
             {
+                // If the wrong key was pressed for the prompt, create sequence.
                 if ((Keyboard.current.anyKey.wasPressedThisFrame && !Keyboard.current[Key.Escape].wasPressedThisFrame) || m_promptSlider.fillAmount >= 1)
                 {
                     Destroy(m_sequence.Dequeue().gameObject);
@@ -167,6 +169,7 @@ public class AntiVirus : MonoBehaviour
             }
             else
             {
+                // If the wrong key was pressed for the sequence, undo the player's progress.
                 if ((Keyboard.current.anyKey.wasPressedThisFrame && !Keyboard.current[Key.Escape].wasPressedThisFrame))
                 {
                     m_promptsRemaining = m_sequence.Count;
@@ -182,6 +185,7 @@ public class AntiVirus : MonoBehaviour
                     m_promptsRemaining = 0;
                 }
 
+                // If the timer has ran out, kill the player.
                 if (m_progress <= 0)
                 {
                     m_isSequence = false;
@@ -214,7 +218,7 @@ public class AntiVirus : MonoBehaviour
         }
     }
 
-    // Creates a glitch effect which also disables input temporarily when transitioning to sequence.
+    // Creates a glitch effect which also disables keyboard input temporarily when transitioning to sequence.
     public IEnumerator CreateGlitch()
     {
         if (!m_isSequence)

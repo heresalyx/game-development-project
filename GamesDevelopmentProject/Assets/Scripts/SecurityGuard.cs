@@ -16,40 +16,43 @@ public class SecurityGuard : MonoBehaviour
     private static bool m_isPlayerDead = false;
     private bool m_isPlaying = false;
 
+    // Request the first destination.
     void Start()
     {
         StartCoroutine(PickNewDestination());
     }
 
-    // Update is called once per frame
     private void Update()
     {
+        // If not yet at the destination and haven't requested a point, travel towards it.
         if (Vector3.Distance(m_currentDestination, m_pathPoints[m_currentPoint].position) > 1.0f && !m_hasRequestedPoint)
         {
             m_currentDestination = m_pathPoints[m_currentPoint].position;
             m_agent.destination = m_currentDestination;
         }
 
-
+        // If doing nothing and have reached the destination, request a new point.
         if (!m_hasRequestedPoint && !m_agent.pathPending && m_agent.remainingDistance < 0.1)
         {
-            Debug.Log("Request");
             m_hasRequestedPoint = true;
             StartCoroutine(PickNewDestination());
         }
 
-        if (m_animator.GetBool("is_Idle") == false && !m_isPlaying)
+        if (m_animator.GetBool("is_Idle") == false && !m_isPlaying)    // Play sound effect if walking.
+
         {
             m_isPlaying = true;
             m_effectSource.Play();
         }
-        else if (m_animator.GetBool("is_Idle") == true && m_isPlaying)
+        else if (m_animator.GetBool("is_Idle") == true && m_isPlaying)    // Stop sound effect if idle.
+
         {
             m_isPlaying = false;
             m_effectSource.Stop();
         }
     }
 
+    // Stay idle for 3 seconds, before deciding on a new destination.
     private IEnumerator PickNewDestination()
     {
         m_animator.SetBool("is_Idle", true);
@@ -66,15 +69,13 @@ public class SecurityGuard : MonoBehaviour
         m_agent.acceleration = 1.0f;
     }
 
+    // If the player is detected, on the guard's area of detection, and isn't dead. Chase after the robot at a faster pace.
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("Detected Trigger Guard");
-
         if (other.gameObject.CompareTag("Robot") && NavMesh.SamplePosition(new Vector3(other.transform.position.x, 0, other.transform.position.z), out NavMeshHit hit, 0.25f, NavMesh.AllAreas) && !m_isPlayerDead)
         {
             StopAllCoroutines();
             m_animator.SetBool("is_Idle", false);
-            Debug.Log("Detected Player Trigger");
             m_currentPoint = m_pathPoints.Count - 1;
             m_hasRequestedPoint = false;
             m_agent.speed = 2.0f;
@@ -82,6 +83,7 @@ public class SecurityGuard : MonoBehaviour
         }
     }
 
+    // Destroy the guard if the player is dead.
     public void KilledPlayer()
     {
         m_isPlayerDead = true;

@@ -9,7 +9,7 @@ public class DeathScreenAnimator : MonoBehaviour
     private float m_progress = 5;
     private bool m_isAnimating = false;
 
-    // Update is called once per frame
+    // Slowly fade out jumpscare picture and fade in the death screen text.
     void FixedUpdate()
     {
         if (m_isAnimating)
@@ -22,11 +22,13 @@ public class DeathScreenAnimator : MonoBehaviour
         }
     }
 
+    // Start the animation.
     public void StartAnimator()
     {
         m_isAnimating = true;
     }
 
+    // Stop and reset the animator.
     public void StopAnimator()
     {
         m_isAnimating = false;

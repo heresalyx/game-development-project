@@ -46,31 +46,37 @@ abstract public class HackableObject : MonoBehaviour
         }
     }
 
+    // Return the level of difficulty.
     public int GetLevel()
     {
         return m_level;
     }
 
+    // Return the intensity of interuptions.
     public int GetInterupt()
     {
         return m_interupt;
     }
 
+    // Return the anti-virus difficulty.
     public int GetAntiVirusDifficulty()
     {
         return m_antiVirusDifficulty;
     }
 
+    // Return if accessibility is done through the robot or not.
     public bool IsPhysical()
     {
         return m_isPhysical;
     }
 
+    // Returns if this object is the end of the level.
     public bool IsLevelEnd()
     {
         return m_isLevelEnd;
     }
 
+    // Set the correct identifier for the object.
     public virtual void SetIdentifierType(bool isPhysical)
     {
         m_isPhysical = isPhysical;
@@ -88,6 +94,7 @@ abstract public class HackableObject : MonoBehaviour
 
     abstract public void UnlockOutput();
 
+    // Return how many levels of security the object has.
     public int GetSecurityState()
     {
         return m_securityState;
