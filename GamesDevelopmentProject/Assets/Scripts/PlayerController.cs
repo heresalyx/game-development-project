@@ -104,6 +104,8 @@ public class PlayerController : MonoBehaviour
                     newLook.y = 0;
                 m_cursor.transform.localPosition += newLook;
 
+                Debug.Log(Screen.width + ", " + Screen.height);
+
                 // Use the x and y axis on currentMove to control camera x rotation, except for webcams.
                 if (m_securityCamera.name != "Webcam")
                 {
@@ -121,7 +123,7 @@ public class PlayerController : MonoBehaviour
                             m_cameraYRotation += xMove;
                     }
                 }                
-                m_securityCamera.gameObject.transform.localRotation = Quaternion.Euler((-m_cursor.transform.localPosition.y / Screen.height * 9) + m_cameraXRotation, (m_cursor.transform.localPosition.x / Screen.width * 16) + m_cameraYRotation, 0f);
+                m_securityCamera.gameObject.transform.localRotation = Quaternion.Euler((-m_cursor.transform.localPosition.y / Screen.height * 8) + m_cameraXRotation, (m_cursor.transform.localPosition.x / Screen.width * 12) + m_cameraYRotation, 0f);
             }
             // For robots.
             else
