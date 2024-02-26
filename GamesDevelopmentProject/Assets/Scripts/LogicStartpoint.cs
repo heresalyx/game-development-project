@@ -17,12 +17,12 @@ public class LogicStartpoint : LogicNode
     {
         if (m_toggle.isOn)
         {
-            m_circuit.color = new Color(0.902f, 0.902f, 0.902f, 1);
+            m_circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
             PlayLogicSwitchEffect(true);
         }
         else
         {
-            m_circuit.color = new Color(0.384f, 0.384f, 0.384f, 1);
+            m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
             PlayLogicSwitchEffect(false);
         }
 
@@ -37,12 +37,12 @@ public class LogicStartpoint : LogicNode
         if (Random.Range(0, 2) == 0)
         {
             m_toggle.isOn = true;
-            m_circuit.color = new Color(0.902f, 0.902f, 0.902f, 1);
+            m_circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
         }
         else
         {
             m_toggle.isOn = false;
-            m_circuit.color = new Color(0.384f, 0.384f, 0.384f, 1);
+            m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
         }
         m_parentNode.Check();
         return true;

@@ -38,9 +38,9 @@ public class IdentifierAnimator : MonoBehaviour
                 if (m_timer > 75)
                     m_digitalIdentifier.text = "\n.\n ";
                 else if (m_timer > 50)
-                    m_digitalIdentifier.text = "\no\n ";
+                    m_digitalIdentifier.text = "\n•\n ";
                 else if (m_timer > 25)
-                    m_digitalIdentifier.text = "\n( )\n ";
+                    m_digitalIdentifier.text = "\no\n ";
                 else
                     m_digitalIdentifier.text = "--\n|    |\n--";
             }

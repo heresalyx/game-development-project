@@ -20,11 +20,11 @@ public class LogicNOTGate : LogicNode
             m_toggle.isOn = isTrue;
             if (m_toggle.isOn)
             {
-                m_circuit.color = new Color(0.902f, 0.902f, 0.902f, 1);
+                m_circuit.color = new Color(0.9058824f, 0.9058824f, 0.9058824f, 1);
             }
             else
             {
-                m_circuit.color = new Color(0.384f, 0.384f, 0.384f, 1);
+                m_circuit.color = new Color(0.1019608f, 0.1019608f, 0.1019608f, 1);
             }
 
             m_parentNode.Check();
